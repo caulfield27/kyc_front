@@ -97,7 +97,7 @@ type Actions = {
   setDocReaderOpen: (payload: boolean) => void;
   setPassportType: (type: 'front' | 'back') => void;
   resetValidation: (key: string) => void;
-  nextStep: (actions: IAction[]) => void;
+  nextStep: (actions: IAction[], handleSend?: () => void) => void;
 };
 
 const initialStates: IStates = {
@@ -126,20 +126,24 @@ export const useFlowStore = create<IStates & Actions>((set, get) => ({
   },
   setData: (key, value) =>
     set((state) => ({ data: { ...state.data, [key]: value } })),
-  nextStep: (actions) => {
+  nextStep: (actions, handleSend) => {
     const { data, step, validation } = get();
     let isValid = true;
     for (const action of actions) {
       if (!data[action.code] && action.required) {
-        validation[action.code] = 'Поле обязательно для заполнения'
+        validation[action.code] = 'Поле обязательно для заполнения';
         isValid = false;
       }
     }
 
-    set({validation: validation})
+    set({ validation: validation });
 
     if (isValid) {
-      set({ step: step + 1 });
+      if (handleSend) {
+        handleSend();
+      } else {
+        set({ step: step + 1 });
+      }
     }
   },
 }));

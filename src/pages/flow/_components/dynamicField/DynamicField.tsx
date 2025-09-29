@@ -104,6 +104,7 @@ export const DynamicField = ({ data }: { data: IAction }) => {
             {description}
           </Label>
           <Input
+            value={(inputData[code] as string) ?? ''}
             name={code}
             onFocus={() => resetValidation(code)}
             className="w-full bg-[#fff]"

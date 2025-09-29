@@ -11,14 +11,8 @@ import type { IAction } from '../process/ProcessTypes';
 
 const Flow = () => {
   // zustand satore states
-  const {
-    step,
-    process,
-    data,
-    isDocReaderOpen,
-    isLivenessOpen,
-    nextStep,
-  } = useFlowStore();
+  const { step, process, data, isDocReaderOpen, isLivenessOpen, nextStep } =
+    useFlowStore();
 
   // locale states
   const navigate = useNavigate();
@@ -36,7 +30,18 @@ const Flow = () => {
   // event handlers
   function handleNextStep() {
     const actions: IAction[] = process.pages[step - 1]?.actions ?? [];
-    nextStep(actions);
+    if (step === process.pages.length) {
+      nextStep(actions, () => {
+        console.log(data);
+        toast.success(
+          'Данные успешно отправлены на рассмотрения',
+          toasterOptions['success']
+        );
+        navigate('/');
+      });
+    } else {
+      nextStep(actions);
+    }
   }
 
   if (isLivenessOpen) return <FaceScan />;
@@ -52,18 +57,7 @@ const Flow = () => {
       <ProcessStep />
       <div className="w-full flex justify-end mt-5">
         {step === process.pages.length ? (
-          <Button
-            onClick={() => {
-              console.log(data);
-              toast.success(
-                'Данные успешно отправлены на рассмотрения',
-                toasterOptions['success']
-              );
-              navigate('/');
-            }}
-          >
-            Отправить
-          </Button>
+          <Button onClick={handleNextStep}>Отправить</Button>
         ) : (
           <Button variant={'outline'} onClick={handleNextStep}>
             Далее
