@@ -22,6 +22,8 @@ export const actionIcon: { [key: string]: ReactElement } = {
   file_upload: <Upload className="text-neutral-500" />,
 };
 
+export const TOAST_LOADER_ID = 'TOAST_LOADER_ID';
+
 export const toasterOptions: { [key: string]: ExternalToast } = {
   success: {
     icon: <CircleCheckBig />,
@@ -31,4 +33,8 @@ export const toasterOptions: { [key: string]: ExternalToast } = {
     icon: <CircleX />,
     position: 'top-right',
   },
+  loading: {
+    position: 'top-right',
+    id: TOAST_LOADER_ID
+  }
 };

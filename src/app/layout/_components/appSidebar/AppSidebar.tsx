@@ -1,7 +1,7 @@
 import { LogOut } from 'lucide-react';
 import { NavLink, useLocation, useNavigate } from 'react-router';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/clsx';
 import { useGlobalStore } from '@/store';
 import {
   Avatar,
@@ -19,9 +19,14 @@ import {
 import { navItems } from './AppSidebarConstants';
 
 export function AppSidebar() {
+  // zustand store states
+  const { user } = useGlobalStore();
+
+  // locale states
   const navigate = useNavigate();
   const { organization } = useGlobalStore();
   const { pathname } = useLocation();
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -59,11 +64,14 @@ export function AppSidebar() {
                 <AvatarImage src={organization.logo} />
               ) : (
                 <AvatarFallback>
-                  {organization.name.slice(0, 2).toUpperCase()}
+                  {user?.email?.slice(0, 1).toUpperCase()  ?? ""}
                 </AvatarFallback>
               )}
             </Avatar>
-            <span className="font-semibold">{organization.name}</span>
+            <div className='flex flex-col'>
+              <span className="font-semibold">{user?.email ?? ''}</span>
+              <span className='font-light text-neutral-700'>{user?.role ?? ''}</span>
+            </div>
           </div>
           <button
             onClick={() => navigate('/login')}

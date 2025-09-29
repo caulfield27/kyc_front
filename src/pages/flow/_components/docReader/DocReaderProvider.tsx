@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/clsx';
 import type { IAction } from '@/pages/process/ProcessTypes';
 import { Button, Card, Label } from '@/ui';
 

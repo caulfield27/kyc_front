@@ -9,6 +9,10 @@ import {
   LazyOrganization,
   LazyProcess,
 } from '@/app/lazy';
+import { Suspense } from 'react';
+import { Loader } from '@/ui';
+import { GuestRoutes } from '../accessProviders/GuestRoutes';
+import { PrivateRoutes } from '../accessProviders/PrivateRoutes';
 
 export const routes = createBrowserRouter([
   {
@@ -35,10 +39,20 @@ export const routes = createBrowserRouter([
   },
   {
     path: 'login',
-    element: <LazyLogin />,
+    element: (
+      <GuestRoutes>
+        <LazyLogin />,
+      </GuestRoutes>
+    ),
   },
   {
     path: 'flow/:id',
-    element: <LazyFlow />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <PrivateRoutes>
+          <LazyFlow />,
+        </PrivateRoutes>
+      </Suspense>
+    ),
   },
 ]);

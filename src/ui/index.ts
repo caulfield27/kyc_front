@@ -129,8 +129,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './tooltip/Tooltip';
+import { DataLoader } from './dataLoader/DataLoader';
 
 export {
+  DataLoader,
   Alert,
   AlertDescription,
   AlertTitle,

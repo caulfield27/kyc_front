@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
 import z from 'zod';
 
 import {
@@ -15,9 +14,13 @@ import {
 } from '@/ui';
 
 import { FormSchema } from './LoginValidation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useLoginMutauion } from '@/services/auth';
+import { cn } from '@/utils/clsx';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
+  // locale states
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -25,13 +28,19 @@ const Login = () => {
       password: '',
     },
   });
-  const navigate = useNavigate();
+  const [passwordType, setPasswordType] = useState<'password' | 'text'>(
+    'password'
+  );
 
+  // api
+  const mutation = useLoginMutauion();
+
+  // event handlers
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-    navigate('/');
-  }
+    mutation.mutate(data);
+  };
 
+  // effect handlers
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty('--background', '#f5f5f5');
@@ -75,15 +84,32 @@ const Login = () => {
               <FormItem>
                 <FormLabel className="text-neutral-600">Пароль</FormLabel>
                 <FormControl>
-                  <Input type="password" {...field} />
+                  <div className="relative">
+                    <Input type={passwordType} {...field} />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setPasswordType(
+                          passwordType === 'password' ? 'text' : 'password'
+                        )
+                      }
+                      className="border-0 outline-0 bg-none cursor-pointer absolute top-1/2 right-[10px] -translate-y-1/2"
+                    >
+                      {passwordType === 'password' ? <Eye /> : <EyeOff />}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <div className="w-full flex justify-center items-center">
-            <Button className="w-full max-w-full" type="submit">
-              Войти
+            <Button
+              disabled={mutation.isPending}
+              className={cn('w-full max-w-full')}
+              type="submit"
+            >
+              {mutation.isPending ? 'Выполняется...' : 'Вход'}
             </Button>
           </div>
         </form>

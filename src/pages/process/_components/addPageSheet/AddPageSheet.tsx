@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { toasterOptions } from '@/constants';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/clsx';
 import { useProcessStore } from '@/store';
 import type { IPage } from '@/store/process/processStoreTypes';
 import {

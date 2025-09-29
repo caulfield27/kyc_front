@@ -1,9 +1,11 @@
 import { create } from 'zustand';
 
 import type { IOrganizarionInfo } from './globalStoreTypes';
+import type { IUser } from '@/services/auth/authTypes';
 
 interface IStates {
   organization: IOrganizarionInfo;
+  user: IUser | null;
 }
 
 type Actions = {
@@ -11,6 +13,7 @@ type Actions = {
   updateOrgLogo: (blob: string | null) => void;
   addDomen: (domen: string) => void;
   updateDomen: (value: string) => void;
+  setUser: (user: IUser) => void;
 };
 
 const initialStates: IStates = {
@@ -19,6 +22,7 @@ const initialStates: IStates = {
     logo: null,
     domens: [],
   },
+  user: null
 };
 
 export const useGlobalStore = create<IStates & Actions>((set, get) => ({
@@ -47,4 +51,5 @@ export const useGlobalStore = create<IStates & Actions>((set, get) => ({
       organization: { ...organization, domens: updatedDomens },
     });
   },
+  setUser: (user) => set({user: user})
 }));
