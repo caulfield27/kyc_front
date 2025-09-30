@@ -1,11 +1,19 @@
 import { create } from 'zustand';
 
-import type { IPage } from '@/store/process/processStoreTypes';
 import type { IAction } from '../process/ProcessTypes';
 
 interface IProcess {
   name: string;
-  pages: IPage[];
+  pages: {
+    name: string;
+    id: number;
+    actions: {
+      label: string;
+      description: string;
+      code: string;
+      required: boolean;
+    }[]
+  }[];
 }
 
 const currentProcess: IProcess = {
