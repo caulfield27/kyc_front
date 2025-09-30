@@ -1,5 +1,5 @@
 import { Pencil, Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { cn } from '@/utils/clsx';
@@ -26,7 +26,6 @@ import {
   Title,
 } from '@/ui';
 import { useProcesses } from '@/services/processes';
-import { sendRequest } from '@/api/apiConfig';
 
 const HomePage = () => {
   // zustand store states
@@ -39,10 +38,6 @@ const HomePage = () => {
   // api
   const { query: data, mutation } = useProcesses();
   const { isPending, data: processes } = data;
-
-  useEffect(() => {
-    sendRequest('processes/element-types/')
-  },[])
 
   return (
     <div className="flex flex-col gap-[60px]">
