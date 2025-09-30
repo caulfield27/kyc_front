@@ -45,8 +45,8 @@ export const DNDContextWrapper = (props: Props) => {
           <ElementCard
             showDragIcon
             isStatic
-            action={draggedItem}
-            position={1}
+            element={draggedItem}
+            position={draggedItem.order+1}
           />
         )}
       </DragOverlay>

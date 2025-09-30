@@ -1,9 +1,9 @@
 import { Pencil, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { cn } from '@/utils/clsx';
-import { useGlobalStore, useProcessStore } from '@/store';
+import { useGlobalStore } from '@/store';
 import {
   BadgeCopy,
   Button,
@@ -26,11 +26,11 @@ import {
   Title,
 } from '@/ui';
 import { useProcesses } from '@/services/processes';
+import { sendRequest } from '@/api/apiConfig';
 
 const HomePage = () => {
   // zustand store states
   const organization = useGlobalStore((state) => state.organization);
-  // const { processes, addProcess } = useProcessStore();
 
   // locale states
   const navigate = useNavigate();
@@ -40,22 +40,9 @@ const HomePage = () => {
   const { query: data, mutation } = useProcesses();
   const { isPending, data: processes } = data;
 
-  // function handleAddProcess() {
-  //   const defaultPage = {
-  //     name: 'Шаг 1',
-  //     actions: [],
-  //     id: Date.now(),
-  //   };
-  //   const newProcess: IProcess = {
-  //     name: processName,
-  //     createdAt: new Date(),
-  //     link: null,
-  //     isPublished: false,
-  //     id: Date.now(),
-  //     pages: [defaultPage],
-  //   };
-  //   addProcess(newProcess);
-  // }
+  useEffect(() => {
+    sendRequest('processes/element-types/')
+  },[])
 
   return (
     <div className="flex flex-col gap-[60px]">
@@ -131,7 +118,13 @@ const HomePage = () => {
                   <TableRow key={row.id}>
                     <TableCell>{row.name}</TableCell>
                     <TableCell>
-                      {row.slug ? <BadgeCopy content={row.slug} /> : ''}
+                      {row.slug ? (
+                        <BadgeCopy
+                          content={window.origin + '/flow/' + row.slug}
+                        />
+                      ) : (
+                        ''
+                      )}
                     </TableCell>
                     <TableCell>{row.created_at}</TableCell>
                     <TableCell>

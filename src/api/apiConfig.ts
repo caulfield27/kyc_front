@@ -20,13 +20,19 @@ sendRequest.interceptors.response.use(
     return response;
   },
   (err: AxiosError<IResponseError>) => {
-    if (err.response?.status === 422 || err.response?.status === 401) {
+    const status = err.response?.status;
+    if (status === 422 || status === 401 || status === 403) {
       const errorMsg = Array.isArray(err?.response?.data?.detail)
         ? (err?.response?.data?.detail?.[0].msg ?? 'Ошибка запрса!')
         : (err?.response?.data?.detail ?? 'Ошибка запрса!');
 
       toast.dismiss(TOAST_LOADER_ID);
       toast.error(errorMsg, toasterOptions['error']);
+    }
+
+    if (status === 401) {
+      localStorage.removeItem('access_token');
+      window.location.href = '/login';
     }
 
     return Promise.reject(err);

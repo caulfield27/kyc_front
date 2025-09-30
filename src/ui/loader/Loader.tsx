@@ -15,7 +15,7 @@ export const Loader = () => {
     right: 0,
     bottom: 0,
     zIndex: 9999,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#ffffff',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',

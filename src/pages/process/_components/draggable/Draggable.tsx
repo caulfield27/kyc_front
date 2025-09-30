@@ -4,11 +4,12 @@ import { CSS } from '@dnd-kit/utilities';
 import { Droppable } from '../droppable/Droppable';
 import { ElementCard } from '../elementCard/ElementCard';
 import type { Props } from './DraggableTypes';
+import { memo } from 'react';
 
-export const Draggable = (props: Props) => {
-  const { action, position } = props;
+export const Draggable = memo((props: Props) => {
+  const { element, position, setElements } = props;
   const { attributes, listeners, transform, setNodeRef } = useDraggable({
-    id: action.id,
+    id: element.order,
   });
 
   const style = transform
@@ -22,16 +23,19 @@ export const Draggable = (props: Props) => {
 
   return (
     <div ref={setNodeRef} style={style}>
-      <Droppable id={action.id}>
+      <Droppable id={element.order}>
         <ElementCard
           showDragIcon
           isDraggable={true}
-          action={action}
+          element={element}
           position={position}
           attributes={attributes}
           listeners={listeners}
+          onElementDelete={(order) =>
+            setElements((prev) => prev.filter((elem) => elem.order !== order))
+          }
         />
       </Droppable>
     </div>
   );
-};
+});

@@ -1,3 +1,4 @@
+import type { IElement } from '@/services/processes/processesTypes';
 import type {
   DragAbortEvent,
   DragCancelEvent,
@@ -9,7 +10,6 @@ import type {
 } from '@dnd-kit/core';
 import type { ReactNode } from 'react';
 
-import type { IAction } from '@/data';
 
 interface Props {
   onDragStart?: (event: DragStartEvent) => void;
@@ -20,7 +20,7 @@ interface Props {
   onDragAbort?: (event: DragAbortEvent) => void;
   onDragPending?: (event: DragPendingEvent) => void;
   children: ReactNode;
-  draggedItem: IAction | null;
+  draggedItem: IElement | null;
 }
 
 export type { Props };

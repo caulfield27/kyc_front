@@ -1,8 +1,8 @@
 import { Pencil } from 'lucide-react';
 import { useState } from 'react';
 
-import { useProcessStore } from '@/store';
-import type { IPage } from '@/store/process/processStoreTypes';
+import { useProcessStore } from '../../ProcessStore';
+import type { IPage } from '@/services/processes/processesTypes';
 import {
   Button,
   Dialog,
@@ -18,7 +18,7 @@ import {
 
 export const ChangeNameDialog = ({ page }: { page: IPage }) => {
   const { updatePageName, setCurrentPage } = useProcessStore();
-  const [pageName, setPageName] = useState(page.name ?? '');
+  const [pageName, setPageName] = useState(page.title ?? '');
 
   return (
     <Dialog>
@@ -57,7 +57,7 @@ export const ChangeNameDialog = ({ page }: { page: IPage }) => {
         <DialogFooter>
           <DialogClose asChild>
             <Button
-              disabled={pageName === (page?.name ?? '')}
+              disabled={pageName === (page?.title ?? '')}
               onClick={() => updatePageName(pageName)}
             >
               Сохранить

@@ -4,14 +4,12 @@ import type {
   DragOverEvent,
   DragStartEvent,
 } from '@dnd-kit/core';
-import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
 import { toasterOptions } from '@/constants';
-import { cn } from '@/utils/clsx';
-import { useProcessStore } from '@/store';
-import type { IPage } from '@/store/process/processStoreTypes';
+import { useProcessStore } from '../../ProcessStore';
+import type { IElement, IPage } from '@/services/processes/processesTypes';
 import {
   Button,
   SheetClose,
@@ -21,60 +19,71 @@ import {
   SheetTitle,
 } from '@/ui';
 
-import { actions } from '../../ProcessContants';
-import type { IAction } from '../../ProcessTypes';
 import { DNDContextWrapper } from '../dndContext/DndContextWrapper';
 import { Draggable } from '../draggable/Draggable';
 import { ElementCard } from '../elementCard/ElementCard';
 import { swapById } from './AddPageSheetUtils';
+import { ElementsList } from '../elementsList/ElementsList';
 
-const AddPageSheet = ({ page }: { page: IPage }) => {
+export const AddPageSheet = ({ page }: { page: IPage }) => {
   // zustand store states
-  const updateActions = useProcessStore((state) => state.updateActions);
+  const updateActions = useProcessStore((state) => state.updateElements);
 
   // locel states
-  const [currentActions, setCurrentActions] = useState<IAction[]>(page.actions);
-  const [draggedItem, setDraggedItem] = useState<IAction | null>(null);
-  const [overItem, setOverItem] = useState<IAction | null>(null);
+  const [currentElements, setCurrentElements] = useState<IElement[]>(
+    page.elements
+  );
+  const [draggedItem, setDraggedItem] = useState<IElement | null>(null);
+  const [overItem, setOverItem] = useState<IElement | null>(null);
 
   // event handlers
-  function handleDragStart(event: DragStartEvent) {
-    const { id } = event.active;
-    const dragged = currentActions.find((action) => action.id === id);
-    setDraggedItem(dragged ?? null);
-  }
+  const handleDragStart = useCallback(
+    (event: DragStartEvent) => {
+      const { id } = event.active;
+      const dragged = currentElements.find((element) => element.order === id);
+      setDraggedItem(dragged ?? null);
+    },
+    [currentElements]
+  );
 
-  function handleDragEnd(event: DragEndEvent) {
-    const id = event.over?.id;
-    if (id) {
-      const swapped = swapById(
-        currentActions,
-        draggedItem?.id ?? 0,
-        id as number
-      );
-      setCurrentActions(swapped);
-    }
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const id = event.over?.id;
+      if (id !== undefined) {
+        const swapped = swapById(
+          currentElements,
+          draggedItem?.order ?? 0,
+          id as number
+        );
+        setCurrentElements(swapped);
+      }
 
-    setDraggedItem(null);
-    setOverItem(null);
-  }
+      setDraggedItem(null);
+      setOverItem(null);
+    },
+    [draggedItem]
+  );
 
-  function handleDragOver(event: DragOverEvent) {
-    if (draggedItem?.id === event.over?.id) return;
+  const handleDragOver = useCallback(
+    (event: DragOverEvent) => {
+      if (draggedItem?.order === event.over?.id) return;
 
-    if (event.over?.id) {
-      const overElem = currentActions.find(
-        (action) => action.id === event.over?.id
-      );
-      setOverItem(overElem ?? null);
-    }
-  }
+      if (event.over?.id !== undefined) {
+        const overElem = currentElements.find(
+          (element) => element.order === event.over?.id
+        );
+        setOverItem(overElem ?? null);
+      }
+    },
+    [draggedItem, currentElements]
+  );
 
-  function handleDragMove(event: DragMoveEvent) {
-    if (!event.over?.id) {
+  const handleDragMove = useCallback((event: DragMoveEvent) => {
+    if (!(event.over?.id !== undefined)) {
       setOverItem(null);
     }
-  }
+  }, []);
+
   return (
     <SheetContent className="w-fit sm:max-w-none">
       <SheetHeader>
@@ -84,35 +93,13 @@ const AddPageSheet = ({ page }: { page: IPage }) => {
         <div className="flex flex-row gap-8">
           <div className="w-[190px] flex flex-col gap-3">
             <span className="text-[16px] font-semibold">Выберите элементы</span>
-            <div className="flex flex-col gap-2">
-              {actions.map((action) => {
-                return (
-                  <div
-                    role="button"
-                    onClick={() =>
-                      setCurrentActions((prev) => [
-                        ...prev,
-                        { ...action, id: Date.now() },
-                      ])
-                    }
-                    key={action.code}
-                    className={cn(
-                      'flex cursor-pointer items-center justify-center w-full py-2 px-3 bg-[#fff] rounded-[8px]  border border-[#D1D1D1]'
-                    )}
-                  >
-                    <div className="w-full flex flex-row justify-start items-center  gap-2">
-                      <Plus />
-                      <span className="text-[16px] font-semibold">
-                        {action.label}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <ElementsList
+              curElements={currentElements}
+              setElements={setCurrentElements}
+            />
           </div>
           <div className="w-[530px] flex flex-col gap-3">
-            <span className="text-[16px] font-semibold">{`Элементы страницы: ${page.name}`}</span>
+            <span className="text-[16px] font-semibold">{`Элементы страницы: ${page.title}`}</span>
             <div className="flex flex-col p-3 bg-background rounded-[8px] gap-2">
               <DNDContextWrapper
                 draggedItem={draggedItem}
@@ -121,22 +108,23 @@ const AddPageSheet = ({ page }: { page: IPage }) => {
                 onDragOver={handleDragOver}
                 onDragMove={handleDragMove}
               >
-                {currentActions.length ? (
-                  currentActions.map((action, idx) => {
-                    return overItem && draggedItem?.id === action.id ? (
+                {currentElements.length ? (
+                  currentElements.map((element) => {
+                    return overItem && draggedItem?.order === element.order ? (
                       <ElementCard
                         showDragIcon={true}
                         isDraggable={true}
                         isStatic
-                        key={action.id}
-                        action={overItem}
-                        position={idx + 1}
+                        key={element.title}
+                        element={overItem}
+                        position={element.order + 1}
                       />
                     ) : (
                       <Draggable
-                        key={action.code + idx}
-                        action={action}
-                        position={idx + 1}
+                        key={element.title}
+                        element={element}
+                        position={element.order + 1}
+                        setElements={setCurrentElements}
                       />
                     );
                   })
@@ -150,11 +138,12 @@ const AddPageSheet = ({ page }: { page: IPage }) => {
           </div>
         </div>
       </div>
+
       <SheetFooter className="flex flex-row">
         <SheetClose asChild>
           <Button
             onClick={() => {
-              updateActions(currentActions);
+              updateActions(currentElements);
               toast.success(
                 'Изменения успешно сохранены.',
                 toasterOptions['success']
@@ -171,5 +160,3 @@ const AddPageSheet = ({ page }: { page: IPage }) => {
     </SheetContent>
   );
 };
-
-export default AddPageSheet;

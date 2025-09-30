@@ -1,8 +1,10 @@
-import type { IAction } from '@/data';
+import type { IElement } from "@/services/processes/processesTypes";
+import type { Dispatch, SetStateAction } from "react";
 
 interface Props {
-  action: IAction;
+  element: IElement;
   position: number;
+  setElements: Dispatch<SetStateAction<IElement[]>>
 }
 
 export type { Props };

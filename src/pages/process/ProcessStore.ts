@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 
-import type { IAction } from '@/pages/process/ProcessTypes';
-
-import type { IPage, IProcess } from './processStoreTypes';
+import type {
+  IElement,
+  IPage,
+  IProcess,
+} from '@/services/processes/processesTypes';
 
 interface IStates {
-  processes: IProcess[];
   currentProcess: IProcess | null;
   currentPage: IPage | null;
 }
@@ -13,23 +14,20 @@ interface IStates {
 type Actions = {
   setPages: (newPage: IPage) => void;
   updateCurrentProcess: (process: IProcess, successCb?: () => void) => void;
-  updateProcesses: (id: number, successCb?: () => void) => void;
-  addProcess: (newProcess: IProcess) => void;
   setCurrentProcess: (process: IProcess) => void;
   setCurrentPage: (page: IPage) => void;
   removePage: (id: number) => void;
-  updateActions: (newAction: IAction[]) => void;
-  removeAction: (id: number) => void;
-  updateAction: (
-    id: number,
-    newAction: IAction,
+  updateElements: (newAction: IElement[]) => void;
+  removeElement: (order: number) => void;
+  updateElement: (
+    order: number,
+    newAction: IElement,
     successCb?: () => void
   ) => void;
   updatePageName: (name: string) => void;
 };
 
 const initialStates: IStates = {
-  processes: [],
   currentProcess: null,
   currentPage: null,
 };
@@ -39,7 +37,7 @@ export const useProcessStore = create<IStates & Actions>((set, get) => ({
   updatePageName: (value) => {
     const { currentPage, currentProcess } = get();
     if (currentPage && currentProcess) {
-      currentPage.name = value;
+      currentPage.title = value;
       const updatedProcess = {
         ...currentProcess,
         pages: currentProcess.pages.map((page) =>
@@ -59,21 +57,10 @@ export const useProcessStore = create<IStates & Actions>((set, get) => ({
       set({ currentProcess: currentProcess });
     }
   },
-  updateProcesses: (id, cb) => {
-    const { currentProcess, processes } = get();
-    const updatedProcesses = processes.map((process) =>
-      process.id === id ? (currentProcess ?? process) : process
-    );
-
-    cb && cb();
-    set({ processes: updatedProcesses });
-  },
   updateCurrentProcess: (process, cb) => {
     cb && cb();
     set({ currentProcess: process });
   },
-  addProcess: (process) =>
-    set((state) => ({ processes: [...state.processes, process] })),
   setCurrentPage: (page) => set({ currentPage: page }),
   setCurrentProcess: (process) => set({ currentProcess: process }),
   removePage: (id) => {
@@ -91,12 +78,12 @@ export const useProcessStore = create<IStates & Actions>((set, get) => ({
       }
     }
   },
-  updateActions: (actions) => {
+  updateElements: (elements) => {
     const { currentPage, currentProcess } = get();
     if (currentPage && currentProcess) {
       const updatedPage = {
         ...currentPage,
-        actions: actions,
+        elements: elements,
       };
       const updatedProcess = {
         ...currentProcess,
@@ -111,13 +98,13 @@ export const useProcessStore = create<IStates & Actions>((set, get) => ({
       });
     }
   },
-  removeAction: (id) => {
+  removeElement: (order) => {
     const { currentPage, currentProcess } = get();
     if (currentPage && currentProcess) {
-      const filteredActions = currentPage.actions.filter(
-        (action) => action.id !== id
+      const filteredElements = currentPage.elements.filter(
+        (elem) => elem.order !== order
       );
-      const updatedPage = { ...currentPage, actions: filteredActions };
+      const updatedPage = { ...currentPage, elements: filteredElements };
       const updatedProcess = {
         ...currentProcess,
         pages: currentProcess.pages.map((page) =>
@@ -130,13 +117,13 @@ export const useProcessStore = create<IStates & Actions>((set, get) => ({
       });
     }
   },
-  updateAction: (id, newAction, cb) => {
+  updateElement: (order, newElem, cb) => {
     const { currentPage, currentProcess } = get();
     if (currentPage && currentProcess) {
-      const updatedActions = currentPage.actions.map((action) =>
-        action.id === id ? newAction : action
+      const updatedElements = currentPage.elements.map((elem) =>
+        elem.order === order ? newElem : elem
       );
-      const updatedPage = { ...currentPage, actions: updatedActions };
+      const updatedPage = { ...currentPage, elements: updatedElements };
       const updatedProcess = {
         ...currentProcess,
         pages: currentProcess.pages.map((page) =>

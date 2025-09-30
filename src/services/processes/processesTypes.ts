@@ -1,31 +1,33 @@
 export interface IPage {
-  id: number;
-  process_id: number;
+  id?: number;
+  process_id?: number;
   title: string;
   order: number;
   elements: IElement[];
+  created_at?: string;
+}
+
+export interface IElementType {
+  id: number;
+  name: string;
+  is_full_page: boolean;
   created_at: string;
 }
 
 export interface IElement {
-  id: number;
-  page_id: number;
-  element_type_id: number;
-  element_type: {
-    id: number;
-    name : string;
-    is_full_page: boolean;
-    created_at: string;
-  }
+  id?: number;
+  page_id?: number;
+  element_type_id?: number;
+  element_type: IElementType;
   field_key: string;
   title: string;
   required: boolean;
-  options: null;
-  order : number;
-  created_at: string;
+  options?: null;
+  order: number;
+  created_at?: string;
 }
 
-export interface IProsess {
+export interface IProcess {
   id: number;
   name: string;
   slug: string;
@@ -36,4 +38,4 @@ export interface IProsess {
   published_at: string;
 }
 
-export type ProcessData = Pick<IProsess, 'name' | 'pages'>;
+export type ProcessData = Pick<IProcess, 'name' | 'pages'>;

@@ -1,52 +1,61 @@
-import type { IAction } from './ProcessTypes';
-
-export const actions: IAction[] = [
-  {
-    label: 'Phone (OTP)',
-    description: 'Телефон',
-    code: 'phone_otp',
-    required: true,
+export const elementsDetails: {[key: string] : {
+  element_type_id: number;
+  field_key: string;
+  title: string;
+}} = {
+  'info_text': {
+    element_type_id: 1,
+    field_key: 'info_text',
+    title: "Дпополнительная игформация"
   },
-  {
-    label: 'Regula Front',
-    description: 'Паспорт (лицевая)',
-    code: 'regula_ocr_front',
-    required: true,
+ 'info_number': {
+    element_type_id: 2,
+    field_key: 'income',
+    title: "Доход в месяц"
   },
-  {
-    label: 'Liveness',
-    description: 'Проверка живности',
-    code: 'visionlabs_liveness',
-    required: true,
+  'info_date': {
+    element_type_id: 3,
+    field_key: 'date',
+    title: "Дата заявки"
   },
-  {
-    label: 'Regula Back',
-    description: 'Паспорт (оборот)',
-    code: 'regula_ocr_back',
-    required: true,
+  'info_list': {
+    element_type_id: 4,
+    field_key: 'info_list',
+    title: "Список"
   },
-  {
-    label: 'Инфо: Текст',
-    description: 'Текст',
-    code: 'info_text',
-    required: true,
+  'info_checkbox': {
+    element_type_id: 5,
+    field_key: 'info_checkbox',
+    title: "Чекбокс"
   },
-  {
-    label: 'Инфо: Число',
-    description: 'Число',
-    code: 'info_number',
-    required: true,
+  'phone_otp': {
+    element_type_id: 6,
+    field_key: 'phone',
+    title: "Номер телефона"
   },
-  {
-    label: 'Инфо: Дата',
-    description: 'Дата',
-    code: 'info_date',
-    required: true,
+  'regula_ocr_front': {
+    element_type_id: 7,
+    field_key: 'doc_front',
+    title: "Паспорт(лицевая)"
   },
-  {
-    label: 'Загрузка файла',
-    description: 'Загрузка файла',
-    code: 'file_upload',
-    required: true,
+  'regula_ocr_back': {
+    element_type_id: 8,
+    field_key: 'doc_back',
+    title: "Паспорт(оборот)"
   },
-];
+   'visionlabs_liveness': {
+    element_type_id: 9,
+    field_key: 'liveness',
+    title: "Проверка живости"
+  },
+  'visionlabs_face_match': {
+    element_type_id: 10,
+    field_key: 'face_match',
+    title: "Сравнение лица"
+  },
+  'file_upload': {
+    element_type_id: 11,
+    field_key: 'extra_doc',
+    title: "Доп. документ (опц)"
+  },
+}

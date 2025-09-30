@@ -1,17 +1,17 @@
-import type { IAction } from '../../ProcessTypes';
+import type { IElement } from '@/services/processes/processesTypes';
 
 export function swapById(
-  array: IAction[],
-  firstId: number,
-  secondId: number
-): IAction[] {
+  array: IElement[],
+  firstOrder: number,
+  secondOrder: number
+): IElement[] {
   let firstIdx = null,
     secondIdx = null;
-  const updatedActions = [...array];
+  const updatedElements = [...array];
 
-  for (let i = 0; i < updatedActions.length; i++) {
-    const action = updatedActions[i];
-    if (action.id === firstId || action.id === secondId) {
+  for (let i = 0; i < updatedElements.length; i++) {
+    const element = updatedElements[i];
+    if (element.order === firstOrder || element.order === secondOrder) {
       if (firstIdx !== null) {
         secondIdx = i;
       } else {
@@ -22,11 +22,14 @@ export function swapById(
   }
 
   if (firstIdx !== null && secondIdx !== null) {
-    [updatedActions[firstIdx], updatedActions[secondIdx]] = [
-      updatedActions[secondIdx],
-      updatedActions[firstIdx],
+    const temp = updatedElements[firstIdx].order;
+    updatedElements[firstIdx].order = updatedElements[secondIdx].order;
+    updatedElements[secondIdx].order = temp;
+    [updatedElements[firstIdx], updatedElements[secondIdx]] = [
+      updatedElements[secondIdx],
+      updatedElements[firstIdx],
     ];
   }
 
-  return updatedActions;
+  return updatedElements;
 }

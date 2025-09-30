@@ -1,9 +1,8 @@
 import { GripVertical, Pencil, Trash } from 'lucide-react';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { toasterOptions } from '@/constants';
-import { useProcessStore } from '@/store';
 import {
   Button,
   Card,
@@ -21,10 +20,11 @@ import {
 } from '@/ui';
 
 import type { IComponentProps } from './ElementTypes';
+import { useProcessStore } from '../../ProcessStore';
 
-export const ElementCard = (props: IComponentProps) => {
+export const ElementCard = memo((props: IComponentProps) => {
   const {
-    action,
+    element,
     position,
     attributes,
     listeners,
@@ -33,27 +33,26 @@ export const ElementCard = (props: IComponentProps) => {
     onElementDelete,
     showDragIcon,
   } = props;
-  const { updateAction } = useProcessStore();
+  const { updateElement } = useProcessStore();
   const [changableValues, setChangableValues] = useState({
-    code: action.code,
-    description: action.description,
-    required: action.required,
+    title: element.title,
+    required: element.required,
   });
 
   return (
-    <Card key={action.code} className="w-full py-2.5 px-3 shadow-none">
+    <Card className="w-full py-2.5 px-3 shadow-none">
       <CardContent className="py-0 px-1.5 flex flex-row items-center justify-between">
         <div className="flex flex-row justify-start items-center gap-3.5">
           <Label>{`№${position}`}</Label>
           <span
-            className={`${action.required ? 'after:content-["*"] after:text-[#ff0000]' : ''}`}
+            className={`${element.required ? 'after:content-["*"] after:text-[#ff0000]' : ''}`}
           >
-            {action.description}
+            {element.title}
           </span>
         </div>
         <div className="flex flex-row gap-1 items-center justify-center">
           <div className="rounded-[100px] bg-[#EFF6FF] text-[#2563EB] text-[12px] font-semibold py-1.5 px-2.5">
-            {action.code}
+            {element.element_type.name}
           </div>
           {!isDraggable && (
             <>
@@ -75,30 +74,17 @@ export const ElementCard = (props: IComponentProps) => {
                       <SheetTitle>Редактировать элемент</SheetTitle>
                     </SheetHeader>
                     <div className="grid flex-1 auto-rows-min gap-6 px-4">
-                      {/* <div className="grid gap-3">
-                    <Label htmlFor="key">Ключ</Label>
-                    <Input
-                      id="key"
-                      defaultValue={changableValues.code}
-                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                        setChangableValues((prev) => ({
-                          ...prev,
-                          code: event.target.value,
-                        }))
-                      }
-                    />
-                  </div> */}
                       <div className="grid gap-3">
                         <Label htmlFor="desc">Заголовок</Label>
                         <Input
                           id="desc"
-                          defaultValue={changableValues.description}
+                          defaultValue={changableValues.title}
                           onChange={(
                             event: React.ChangeEvent<HTMLInputElement>
                           ) =>
                             setChangableValues((prev) => ({
                               ...prev,
-                              description: event.target.value,
+                              title: event.target.value,
                             }))
                           }
                         />
@@ -113,7 +99,7 @@ export const ElementCard = (props: IComponentProps) => {
                               required: checked,
                             }))
                           }
-                          id="required "
+                          id="required"
                         />
                       </div>
                     </div>
@@ -121,10 +107,10 @@ export const ElementCard = (props: IComponentProps) => {
                       <SheetClose asChild>
                         <Button
                           onClick={() =>
-                            updateAction(
-                              action.id ?? -1,
+                            updateElement(
+                              element.order,
                               {
-                                ...action,
+                                ...element,
                                 ...changableValues,
                               },
                               () => {
@@ -150,7 +136,7 @@ export const ElementCard = (props: IComponentProps) => {
           )}
           <Button
             onClick={() => {
-              onElementDelete && onElementDelete(action?.id ?? -1);
+              onElementDelete && onElementDelete(element.order);
             }}
             variant={'outline'}
             size={'icon'}
@@ -167,4 +153,4 @@ export const ElementCard = (props: IComponentProps) => {
       </CardContent>
     </Card>
   );
-};
+});
