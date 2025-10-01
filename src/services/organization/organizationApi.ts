@@ -1,9 +1,14 @@
 import { sendRequest } from '@/api/apiConfig';
-import type { IOrganizationData, IOrganizationDomain } from './organizationTypes';
+import type {
+  IOrganizationData,
+  IOrganizationDomain,
+  IUpdateOrgData,
+} from './organizationTypes';
 import {
   DELETE_DOMAIN,
   DOMAINS,
   ORG_DASHBOARD,
+  ORG_UPDATE,
   UPLOAD_LOGO,
   VERIFY_DOMAIN,
 } from './organizationConstants';
@@ -12,6 +17,15 @@ export async function getOrganization(): Promise<IOrganizationData> {
   try {
     const response = await sendRequest.get(ORG_DASHBOARD);
     return response.data?.organization ?? {};
+  } catch (e) {
+    throw e;
+  }
+}
+
+export async function updateOrganization(data: IUpdateOrgData) {
+  try {
+    const response = await sendRequest.post(ORG_UPDATE, data);
+    return response.data;
   } catch (e) {
     throw e;
   }
@@ -55,7 +69,7 @@ export async function verifyDomen(id: number) {
 
 export async function deleteDomen(id: number) {
   try {
-    const response = await sendRequest.post(DELETE_DOMAIN(id));
+    const response = await sendRequest.delete(DELETE_DOMAIN(id));
     return response.data;
   } catch (e) {
     throw e;

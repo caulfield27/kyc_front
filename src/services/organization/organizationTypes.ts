@@ -15,3 +15,10 @@ export interface IOrganizationDomain{
     organization_id: number;
     created_at: string;
 }
+
+export interface IUpdateOrgData{
+    name: string;
+    primary_color: string;
+    accent_color: string;
+    file: string;
+}
