@@ -2,9 +2,8 @@ import { CheckCircleIcon, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 
-import { cn } from '@/utils/clsx';
-import { useProcessStore } from './ProcessStore';
 import type { IPage } from '@/services/processes/processesTypes';
+import { useProcessById } from '@/services/processes/useProcesses';
 import {
   BadgeCopy,
   Breadcrumb,
@@ -17,10 +16,12 @@ import {
   Label,
   Sheet,
   Title,
+  Title2,
 } from '@/ui';
+import { cn } from '@/utils/clsx';
 
 import { AddPageSheet, ChangeNameDialog, ElementCard } from './_components';
-import { useProcessById } from '@/services/processes/useProcesses';
+import { useProcessStore } from './ProcessStore';
 
 const Process = () => {
   // zustand store states
@@ -73,7 +74,13 @@ const Process = () => {
   return (
     <>
       <div className="flex flex-col gap-2.5 mb-[60px]">
-        <Title text={`Процесс:  ${currentProcess?.name}`} />
+        <div className="flex flex-row items-center gap-1">
+          <Title text={`Редактирование процесса:`} />
+          <Title2
+            text={currentProcess?.name ?? ''}
+            className="m-0 text-neutral-500 mt-1.5"
+          />
+        </div>
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -85,7 +92,7 @@ const Process = () => {
             <BreadcrumbItem className="text-neutral-950  font-semibold">
               <BreadcrumbLink asChild>
                 <Link className="pointer-events-none" to="process">
-                  Создание процесса
+                  Редактирование процесса
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -98,9 +105,16 @@ const Process = () => {
         <>
           <div className="bg-[#ffffff] p-5 rounded-[16px] flex flex-col gap-6">
             <div className="bg-background p-1 rounded-[8px]">
-              <div className="bg-[#ffffff] py-2.5 px-3 rounded-[8px] flex flex-row items-center justify-between mb-[4px]">
-                <Label>Страницы</Label>
-                <Label>Действия</Label>
+              <div className="bg-[#ffffff] py-2.5 px-3 rounded-[8px] w-full flex flex-row  justify-center items-center mb-[4px]">
+                <div className="w-[33.3%]">
+                  <Label>Страницы</Label>
+                </div>
+                <div className="w-[33.3%]">
+                  <Label>Редактировать название</Label>
+                </div>
+                <div className="w-[33.3%] flex justify-end">
+                  <Label>Действия</Label>
+                </div>
               </div>
               <div className="flex flex-col gap-2">
                 {currentProcess?.pages.map((page) => {
@@ -112,13 +126,18 @@ const Process = () => {
                       role="button"
                       key={page.id}
                       className={cn(
-                        'flex items-center justify-between cursor-pointer w-full p-2.5 bg-[#fff] rounded-[4px]',
+                        'flex flex-row justify-center items-center cursor-pointer w-full p-2.5 bg-[#fff] rounded-[4px]',
                         currentPage?.id === page.id &&
                           'border-[1px] border-[#2563EB]'
                       )}
                     >
-                      <span>{page.title}</span>
-                      <div className="flex flex-row items-center justify-center gap-3">
+                      <div className="w-[33.3%]">
+                        <span>{page.title}</span>
+                      </div>
+                      <div className="w-[33.3%]">
+                        <ChangeNameDialog page={page} />
+                      </div>
+                      <div className="flex flex-row items-center justify-end gap-3 w-[33.3%]">
                         <Button
                           variant={'outline'}
                           onClick={(ev: React.MouseEvent) => {
@@ -130,7 +149,6 @@ const Process = () => {
                           <Plus />
                           Добавить элементы
                         </Button>
-                        <ChangeNameDialog page={page} />
                         <Button
                           onClick={(ev: React.MouseEvent) => {
                             ev.stopPropagation();

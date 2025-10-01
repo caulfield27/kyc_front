@@ -1,14 +1,17 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
+
+import { TOAST_LOADER_ID, toasterOptions } from '@/constants';
+
 import {
   addProcess,
   getElements,
   getProcessById,
   getProcesses,
+  getProcessForm,
   publishProcess,
   updateProcessById,
 } from './processesApi';
-import { toast } from 'sonner';
-import { TOAST_LOADER_ID, toasterOptions } from '@/constants';
 import { PROCESSES_KEY } from './processesConstants';
 import type { ProcessData } from './processesTypes';
 
@@ -64,6 +67,15 @@ export const useProcessById = (id: number) => {
   });
 
   return { query, addMutation, publishMutation };
+};
+
+export const useProcessForm = (slug: string, step: number) => {
+  const query = useQuery({
+    queryKey: [PROCESSES_KEY.process_form, slug, step],
+    queryFn: () => getProcessForm(slug, step),
+  });
+
+  return query;
 };
 
 export const useElements = () => {

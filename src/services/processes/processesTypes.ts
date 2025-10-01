@@ -1,3 +1,5 @@
+import type { IOrganizationData } from '../organization/organizationTypes';
+
 export interface IPage {
   id?: number;
   process_id?: number;
@@ -36,6 +38,15 @@ export interface IProcess {
   pages: IPage[];
   created_at: string;
   published_at: string;
+}
+
+export interface IProcessFormResponse {
+  process: IProcess;
+  organization: IOrganizationData;
+  pages: IPage[];
+  step: number;
+  total: number;
+  current_page: IPage;
 }
 
 export type ProcessData = Pick<IProcess, 'name' | 'pages'>;

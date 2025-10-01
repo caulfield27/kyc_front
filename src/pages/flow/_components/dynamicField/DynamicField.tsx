@@ -1,33 +1,33 @@
-import { ChevronDownIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useParams } from 'react-router';
 
+import type { IFile } from '@/services/applications/applicationTypes';
+import { useFileUpload } from '@/services/applications/useApplications';
+import type { IElement } from '@/services/processes/processesTypes';
+import { Input, Label } from '@/ui';
 import { cn } from '@/utils/clsx';
-import type { IAction } from '@/pages/process/ProcessTypes';
-import {
-  Button,
-  Calendar,
-  Input,
-  Label,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/ui';
 
 import { useFlowStore } from '../../FlowStore';
 
-export const DynamicField = ({ data }: { data: IAction }) => {
+export const DynamicField = ({ data }: { data: IElement }) => {
   // zusrtand store states
-  const { data: inputData, setData, resetValidation } = useFlowStore();
+  const { inputData, setInputData, resetValidation } = useFlowStore();
 
   // locale states
-  const { code, description, required } = data;
-  const [calendarOpen, setCalendarOpen] = useState(false);
+  const { slug } = useParams();
+  const { element_type, title, required } = data;
+  const { name } = element_type;
   const type =
-    code === 'file_upload'
+    name === 'file_upload'
       ? 'file'
-      : code === 'info_number'
+      : name === 'info_number'
         ? 'number'
         : 'text';
+  const inputValue =
+    type === 'file'
+      ? ((inputData[name] as IFile)?.filename ?? '')
+      : inputData[name];
+  // api
+  const { mutate } = useFileUpload(slug ?? '', setInputData);
 
   //  event handlers
 
@@ -40,80 +40,40 @@ export const DynamicField = ({ data }: { data: IAction }) => {
         reader.readAsDataURL(file);
 
         reader.onload = () => {
-          setData(name, reader.result);
+          mutate({
+            field_key: name,
+            filename: file.name,
+            content:
+              typeof reader.result === 'string'
+                ? reader.result.split(',')[1]
+                : '',
+            is_integration_result: false,
+          });
         };
       }
     } else {
-      setData(name, value);
+      setInputData(name, value);
     }
   }
 
-  switch (code) {
-    case 'info_date':
-      return (
-        <div className="w-full flex flex-col gap-3">
-          <Label
-            htmlFor="date"
-            className={cn(
-              'px-1',
-              required && 'after:content-["*"] after:text-[#ff0000]'
-            )}
-          >
-            Дата
-          </Label>
-          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                id="date"
-                className="w-48 justify-between font-normal"
-              >
-                {inputData[code]
-                  ? (inputData[code] as Date).toLocaleDateString()
-                  : 'Выберите дату'}
-                <ChevronDownIcon />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              className="w-auto overflow-hidden p-0"
-              align="start"
-            >
-              <Calendar
-                mode="single"
-                selected={inputData[code] as Date | undefined}
-                captionLayout="dropdown"
-                onSelect={(date) => {
-                  setData(code, date);
-                  setCalendarOpen(false);
-                  resetValidation(code);
-                }}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-      );
-    default:
-      return (
-        <div className="grid w-full items-center gap-3">
-          <Label
-            htmlFor={code}
-            className={cn(
-              required && 'after:content-["*"] after:text-[#ff0000]'
-            )}
-          >
-            {description}
-          </Label>
-          <Input
-            value={(inputData[code] as string) ?? ''}
-            name={code}
-            onFocus={() => resetValidation(code)}
-            className="w-full bg-[#fff]"
-            type={type}
-            id={code}
-            placeholder={description}
-            onChange={handleChange}
-          />
-        </div>
-      );
-  }
+  return (
+    <div className="grid w-full items-center gap-3">
+      <Label
+        htmlFor={name}
+        className={cn(required && 'after:content-["*"] after:text-[#ff0000]')}
+      >
+        {title}
+      </Label>
+      <Input
+        value={(inputValue as string) ?? ''}
+        name={name}
+        onFocus={() => resetValidation(name)}
+        className="w-full bg-[#fff]"
+        type={type}
+        id={name}
+        placeholder={title}
+        onChange={handleChange}
+      />
+    </div>
+  );
 };

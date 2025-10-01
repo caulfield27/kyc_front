@@ -1,61 +1,63 @@
-export const elementsDetails: {[key: string] : {
-  element_type_id: number;
-  field_key: string;
-  title: string;
-}} = {
-  'info_text': {
+export const elementsDetails: {
+  [key: string]: {
+    element_type_id: number;
+    field_key: string;
+    title: string;
+  };
+} = {
+  info_text: {
     element_type_id: 1,
     field_key: 'info_text',
-    title: "Дпополнительная игформация"
+    title: 'Дополнительная информация',
   },
- 'info_number': {
+  info_number: {
     element_type_id: 2,
     field_key: 'income',
-    title: "Доход в месяц"
+    title: 'Доход в месяц',
   },
-  'info_date': {
+  info_date: {
     element_type_id: 3,
     field_key: 'date',
-    title: "Дата заявки"
+    title: 'Дата заявки',
   },
-  'info_list': {
+  info_list: {
     element_type_id: 4,
     field_key: 'info_list',
-    title: "Список"
+    title: 'Список',
   },
-  'info_checkbox': {
+  info_checkbox: {
     element_type_id: 5,
     field_key: 'info_checkbox',
-    title: "Чекбокс"
+    title: 'Чекбокс',
   },
-  'phone_otp': {
+  phone_otp: {
     element_type_id: 6,
     field_key: 'phone',
-    title: "Номер телефона"
+    title: 'Номер телефона',
   },
-  'regula_ocr_front': {
+  regula_ocr_front: {
     element_type_id: 7,
     field_key: 'doc_front',
-    title: "Паспорт(лицевая)"
+    title: 'Паспорт(лицевая)',
   },
-  'regula_ocr_back': {
+  regula_ocr_back: {
     element_type_id: 8,
     field_key: 'doc_back',
-    title: "Паспорт(оборот)"
+    title: 'Паспорт(оборот)',
   },
-   'visionlabs_liveness': {
+  visionlabs_liveness: {
     element_type_id: 9,
     field_key: 'liveness',
-    title: "Проверка живости"
+    title: 'Проверка живости',
   },
-  'visionlabs_face_match': {
+  visionlabs_face_match: {
     element_type_id: 10,
     field_key: 'face_match',
-    title: "Сравнение лица"
+    title: 'Сравнение лица',
   },
-  'file_upload': {
+  file_upload: {
     element_type_id: 11,
     field_key: 'extra_doc',
-    title: "Доп. документ (опц)"
+    title: 'Доп. документ (опц)',
   },
-}
+};

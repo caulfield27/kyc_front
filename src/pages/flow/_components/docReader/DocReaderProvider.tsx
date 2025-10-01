@@ -1,25 +1,27 @@
-import { cn } from '@/utils/clsx';
-import type { IAction } from '@/pages/process/ProcessTypes';
+import type { IElement } from '@/services/processes/processesTypes';
 import { Button, Card, Label } from '@/ui';
+import { cn } from '@/utils/clsx';
 
 import { useFlowStore } from '../../FlowStore';
 
-const DocReaderProvider = ({ process }: { process: IAction }) => {
-  const { code, description, required } = process;
-  const { data, setDocReaderOpen, setPassportType, resetValidation} = useFlowStore();
+const DocReaderProvider = ({ process }: { process: IElement }) => {
+  const { element_type, title, required } = process;
+  const { inputData, setDocReaderOpen, setPassportType, resetValidation } =
+    useFlowStore();
+  const { name } = element_type;
 
-  if (data[code]) {
+  if (inputData[name]) {
     return (
       <div className="flex flex-col gap-3 max-w-[500px]">
         <Label
           className={cn(required && 'after:content-["*"] after:text-[#ff0000]')}
         >
-          {description}
+          {title}
         </Label>
         <img
           className="rounded-2xl"
-          src={`data:image/png;base64,${data[code]}`}
-          alt={description}
+          src={`data:image/png;base64,${inputData[name]}`}
+          alt={title}
         />
       </div>
     );
@@ -31,12 +33,12 @@ const DocReaderProvider = ({ process }: { process: IAction }) => {
         <span
           className={cn(required && 'after:content-["*"] after:text-[#ff0000]')}
         >
-          {description}
+          {title}
         </span>
         <Button
           onClick={() => {
-            resetValidation(code);
-            if (code.endsWith('front')) {
+            resetValidation(name);
+            if (name.endsWith('front')) {
               setPassportType('front');
             } else {
               setPassportType('back');
@@ -45,7 +47,7 @@ const DocReaderProvider = ({ process }: { process: IAction }) => {
             setDocReaderOpen(true);
           }}
         >
-          Начть
+          Начать
         </Button>
       </div>
     </Card>

@@ -1,12 +1,13 @@
-import { cn } from '@/utils/clsx';
-import type { IAction } from '@/pages/process/ProcessTypes';
+import type { IElement } from '@/services/processes/processesTypes';
 import { Button, Card, Label } from '@/ui';
+import { cn } from '@/utils/clsx';
 
 import { useFlowStore } from '../../FlowStore';
 
-const FaceScanProvider = ({ process }: { process: IAction }) => {
-  const { code, required, description } = process;
-  const { data, setLivenessOpen, resetValidation } = useFlowStore();
+const FaceScanProvider = ({ process }: { process: IElement }) => {
+  const { element_type, required, title } = process;
+  const { name } = element_type;
+  const { inputData, setLivenessOpen, resetValidation } = useFlowStore();
 
   return (
     <Card className="py-2.5 px-3.5">
@@ -14,18 +15,18 @@ const FaceScanProvider = ({ process }: { process: IAction }) => {
         <span
           className={cn(required && 'after:content-["*"] after:text-[#ff0000]')}
         >
-          {description}
+          {title}
         </span>
-        {data[code] ? (
-          <Label className="py-3">{`Совпадение - ${data[code] ?? 0}%`}</Label>
+        {inputData[name] ? (
+          <Label className="py-3">{`Совпадение - ${inputData[name] ?? 0}%`}</Label>
         ) : (
           <Button
             onClick={() => {
-              resetValidation(code);
+              resetValidation(name);
               setLivenessOpen(true);
             }}
           >
-            Начть
+            Начать
           </Button>
         )}
       </div>

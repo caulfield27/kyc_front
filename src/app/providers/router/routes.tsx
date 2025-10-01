@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { createBrowserRouter } from 'react-router';
 
 import { Layout } from '@/app/layout';
@@ -9,8 +10,8 @@ import {
   LazyOrganization,
   LazyProcess,
 } from '@/app/lazy';
-import { Suspense } from 'react';
 import { Loader } from '@/ui';
+
 import { GuestRoutes } from '../accessProviders/GuestRoutes';
 import { PrivateRoutes } from '../accessProviders/PrivateRoutes';
 
@@ -46,12 +47,10 @@ export const routes = createBrowserRouter([
     ),
   },
   {
-    path: 'flow/:id',
+    path: 'flow/:slug',
     element: (
       <Suspense fallback={<Loader />}>
-        <PrivateRoutes>
-          <LazyFlow />,
-        </PrivateRoutes>
+        <LazyFlow />,
       </Suspense>
     ),
   },

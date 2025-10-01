@@ -1,10 +1,10 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
+import { memo } from 'react';
 
 import { Droppable } from '../droppable/Droppable';
 import { ElementCard } from '../elementCard/ElementCard';
 import type { Props } from './DraggableTypes';
-import { memo } from 'react';
 
 export const Draggable = memo((props: Props) => {
   const { element, position, setElements } = props;
@@ -32,7 +32,11 @@ export const Draggable = memo((props: Props) => {
           attributes={attributes}
           listeners={listeners}
           onElementDelete={(order) =>
-            setElements((prev) => prev.filter((elem) => elem.order !== order))
+            setElements((prev) =>
+              prev
+                .filter((elem) => elem.order !== order)
+                .map((elem, idx) => ({ ...elem, order: idx }))
+            )
           }
         />
       </Droppable>

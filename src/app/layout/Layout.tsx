@@ -1,13 +1,18 @@
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Outlet } from 'react-router';
 
+import { getMe } from '@/services/auth';
 import { SidebarProvider, SidebarTrigger } from '@/ui';
 import { Loader } from '@/ui/loader/Loader';
 
-import { AppSidebar } from './_components';
 import { PrivateRoutes } from '../providers';
+import { AppSidebar } from './_components';
 
 const Layout = () => {
+  useEffect(() => {
+    getMe();
+  }, []);
+
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { toasterOptions } from '@/constants';
-import { cn } from '@/utils/clsx';
 import { useGlobalStore } from '@/store/global/globalStore';
 import { Avatar, AvatarImage, Button, Card, Input, Title } from '@/ui';
+import { cn } from '@/utils/clsx';
 
 const Organization = () => {
   // zustand store states
@@ -66,7 +66,6 @@ const Organization = () => {
               value={inputValues.name}
               onChange={handleInputChange}
               name="name"
-              defaultValue={'humo'}
             />
           </div>
           <div>

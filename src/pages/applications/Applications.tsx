@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { toasterOptions } from '@/constants';
-import { cn } from '@/utils/clsx';
 import {
   Label,
   Select,
@@ -20,9 +19,14 @@ import {
   TableRow,
   Title,
 } from '@/ui';
+import { cn } from '@/utils/clsx';
 
 import { ApplySheet } from './_components';
-import { applications, statusColors, statusLabel } from './ApplicationsContants';
+import {
+  applications,
+  statusColors,
+  statusLabel,
+} from './ApplicationsContants';
 import type { IApplication, StatusType } from './ApplicationsTypes';
 
 const Applications = () => {
@@ -52,7 +56,6 @@ const Applications = () => {
               onValueChange={(value: string) =>
                 setStatusFilter(value as StatusType)
               }
-              defaultValue={statusFilter}
               value={statusFilter}
             >
               <SelectTrigger className="w-[180px]">
@@ -94,7 +97,8 @@ const Applications = () => {
                         <div
                           className={cn(
                             'font-semibold w-fit rounded-[100px] py-1 px-2.5',
-                            statusColors[apply.status].bg, statusColors[apply.status].color
+                            statusColors[apply.status].bg,
+                            statusColors[apply.status].color
                           )}
                         >
                           {statusLabel[apply.status] ?? apply.status}

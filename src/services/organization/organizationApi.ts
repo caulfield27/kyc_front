@@ -1,9 +1,5 @@
 import { sendRequest } from '@/api/apiConfig';
-import type {
-  IOrganizationData,
-  IOrganizationDomain,
-  IUpdateOrgData,
-} from './organizationTypes';
+
 import {
   DELETE_DOMAIN,
   DOMAINS,
@@ -12,12 +8,18 @@ import {
   UPLOAD_LOGO,
   VERIFY_DOMAIN,
 } from './organizationConstants';
+import type {
+  IOrganizationData,
+  IOrganizationDomain,
+  IUpdateOrgData,
+} from './organizationTypes';
 
 export async function getOrganization(): Promise<IOrganizationData> {
   try {
     const response = await sendRequest.get(ORG_DASHBOARD);
     return response.data?.organization ?? {};
   } catch (e) {
+    console.error(e);
     throw e;
   }
 }
@@ -27,6 +29,7 @@ export async function updateOrganization(data: IUpdateOrgData) {
     const response = await sendRequest.post(ORG_UPDATE, data);
     return response.data;
   } catch (e) {
+    console.error(e);
     throw e;
   }
 }
@@ -36,6 +39,7 @@ export async function uploadLogo(data: { file: string }) {
     const response = await sendRequest.post(UPLOAD_LOGO, data);
     return response.data;
   } catch (e) {
+    console.error(e);
     throw e;
   }
 }
@@ -45,6 +49,7 @@ export async function getDomains(): Promise<IOrganizationDomain[]> {
     const response = await sendRequest.get(DOMAINS);
     return response.data;
   } catch (e) {
+    console.error(e);
     throw e;
   }
 }
@@ -54,6 +59,7 @@ export async function addDomain(data: { domain: string }) {
     const response = await sendRequest.post(DOMAINS, data);
     return response.data;
   } catch (e) {
+    console.error(e);
     throw e;
   }
 }
@@ -63,6 +69,7 @@ export async function verifyDomen(id: number) {
     const response = await sendRequest.post(VERIFY_DOMAIN(id));
     return response.data;
   } catch (e) {
+    console.error(e);
     throw e;
   }
 }
@@ -72,6 +79,7 @@ export async function deleteDomen(id: number) {
     const response = await sendRequest.delete(DELETE_DOMAIN(id));
     return response.data;
   } catch (e) {
+    console.error(e);
     throw e;
   }
 }

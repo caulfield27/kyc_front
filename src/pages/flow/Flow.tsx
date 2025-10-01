@@ -1,21 +1,38 @@
-import { useNavigate } from 'react-router';
-import { toast } from 'sonner';
-
-import { toasterOptions } from '@/constants';
-import { Button, Label, Title } from '@/ui';
-
-import { FaceScan, Passport, ProcessStep } from './_components';
-import { useFlowStore } from './FlowStore';
 import { useEffect } from 'react';
-import type { IAction } from '../process/ProcessTypes';
+import { useParams } from 'react-router';
+
+import { useApplicationMutation } from '@/services/applications/useApplications';
+import { useProcessForm } from '@/services/processes/useProcesses';
+import { Button, Label, Loader, Title } from '@/ui';
+
+import { Error, FaceScan, Passport, ProcessStep, Success } from './_components';
+import { useFlowStore } from './FlowStore';
+import { generatePayload } from './FlowUtils';
 
 const Flow = () => {
   // zustand satore states
-  const { step, process, data, isDocReaderOpen, isLivenessOpen, nextStep } =
-    useFlowStore();
+  const {
+    step,
+    isDocReaderOpen,
+    isLivenessOpen,
+    setPage,
+    inputData,
+    setStep,
+    submissionState,
+    setSubmissionState,
+    errorState,
+  } = useFlowStore();
 
   // locale states
-  const navigate = useNavigate();
+  const { slug } = useParams();
+
+  // api
+  const { isPending, data: process } = useProcessForm(slug ?? '', step);
+  const { mutate, isPending: mutationPending } = useApplicationMutation(
+    slug ?? '',
+    setStep,
+    setSubmissionState
+  );
 
   // effect handlers
   useEffect(() => {
@@ -27,45 +44,63 @@ const Flow = () => {
     };
   }, []);
 
-  // event handlers
-  function handleNextStep() {
-    const actions: IAction[] = process.pages[step - 1]?.actions ?? [];
-    if (step === process.pages.length) {
-      nextStep(actions, () => {
-        console.log(data);
-        toast.success(
-          'Данные успешно отправлены на рассмотрения',
-          toasterOptions['success']
-        );
-        navigate('/');
-      });
-    } else {
-      nextStep(actions);
+  useEffect(() => {
+    if (process?.current_page) {
+      setPage(process.current_page);
     }
+  }, [process]);
+
+  // event handlers
+
+  function handleSend() {
+    const payload = {
+      step,
+      data: generatePayload(inputData),
+      is_final: step === process?.total,
+    };
+    mutate(payload);
   }
 
-  if (isLivenessOpen) return <FaceScan />;
-
-  if (isDocReaderOpen) return <Passport />;
-
-  return (
-    <div className="max-w-[var(--container_mw)] m-auto py-8">
-      <div className="w-full flex flex-row items-end justify-between border-b-[1px] py-1 border-neutral-300">
-        <Title className="border-0 mb-0" text={process.name} />
-        <Label className="text-neutral-500">{`Шаг ${step} из ${process.pages.length}`}</Label>
-      </div>
-      <ProcessStep />
-      <div className="w-full flex justify-end mt-5">
-        {step === process.pages.length ? (
-          <Button onClick={handleNextStep}>Отправить</Button>
-        ) : (
-          <Button variant={'outline'} onClick={handleNextStep}>
-            Далее
-          </Button>
-        )}
-      </div>
-    </div>
-  );
+  switch (true) {
+    case submissionState.isSuccess:
+      return <Success />;
+    case errorState.isError:
+      return <Error />;
+    case isLivenessOpen:
+      return <FaceScan />;
+    case isDocReaderOpen:
+      return <Passport />;
+    default:
+      return isPending ? (
+        <Loader />
+      ) : (
+        <div className="max-w-[var(--container_mw)] m-auto py-8">
+          <div className="w-full flex flex-row items-end justify-between border-b-[1px] py-1 border-neutral-300">
+            <Title
+              className="border-0 mb-0"
+              text={process?.process.name ?? ''}
+            />
+            <Label className="text-neutral-500">{`Шаг ${process?.step ?? 0} из ${process?.total ?? 0}`}</Label>
+          </div>
+          <ProcessStep />
+          <div className="w-full flex justify-end mt-5">
+            {step === process?.total ? (
+              <Button disabled={mutationPending} onClick={handleSend}>
+                {mutationPending ? 'Отправляем' : 'Отправить'}
+              </Button>
+            ) : (
+              <Button
+                disabled={mutationPending}
+                variant={'outline'}
+                onClick={handleSend}
+              >
+                {mutationPending ? 'отправляем...' : 'Далее'}
+              </Button>
+            )}
+          </div>
+        </div>
+      );
+  }
 };
 
 export default Flow;

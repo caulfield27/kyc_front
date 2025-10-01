@@ -8,7 +8,7 @@ import { setupCanvas } from './FaceScanUtils';
 export const FaceScan = () => {
   // ZUSTAND STORE STATES
   const { init, instruction, loadingText } = useFaceScanStore();
-  const { setData, setLivenessOpen } = useFlowStore();
+  const { setInputData, setLivenessOpen } = useFlowStore();
 
   // DOM REFS
   const visionRef = useRef<HTMLDivElement | null>(null);
@@ -38,7 +38,7 @@ export const FaceScan = () => {
 
     const timerId = setTimeout(() => {
       setLivenessOpen(false);
-      setData('visionlabs_liveness', 85);
+      setInputData('visionlabs_liveness', 85);
     }, 4000);
 
     return () => {

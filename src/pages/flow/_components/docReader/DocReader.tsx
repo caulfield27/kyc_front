@@ -9,7 +9,9 @@ import {
   type TransactionEvent,
 } from '@regulaforensics/vp-frontend-document-components';
 import { type CSSProperties, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router';
 
+import { useFileUpload } from '@/services/applications/useApplications';
 import { Loader } from '@/ui';
 
 import { useFlowStore } from '../../FlowStore';
@@ -26,11 +28,19 @@ const containerStyle: CSSProperties = {
 };
 
 export function Passport() {
+  // zustand store states
+  const { setInputData, setDocReaderOpen, passportType } = useFlowStore();
+
+  // locale states
+  const { slug } = useParams();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const docReaderRef = useRef<DocumentReaderWebComponent>(null);
   const [loading, setLoading] = useState(true);
-  const { setData, setDocReaderOpen, passportType } = useFlowStore();
 
+  // api
+  const { mutate } = useFileUpload(slug ?? '', setInputData);
+
+  // event handlers
   const listener = (
     data: CustomEvent<DocumentReaderDetailType | TransactionEvent>
   ) => {
@@ -61,7 +71,16 @@ export function Passport() {
           GraphicFieldType.DOCUMENT_FRONT
         )?.valueList[1].value;
         if (value) {
-          setData(`regula_ocr_${passportType}`, value);
+          const key = `regula_ocr_${passportType}`;
+          mutate({
+            field_key: key,
+            filename:
+              passportType === 'front'
+                ? 'passport_front.png'
+                : 'passport_back.png',
+            content: value,
+            is_integration_result: false,
+          });
         }
         setDocReaderOpen(false);
         //todo
@@ -73,6 +92,7 @@ export function Passport() {
     }
   };
 
+  // effect handlers
   useEffect(() => {
     const containerCurrent = containerRef.current;
 

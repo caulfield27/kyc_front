@@ -2,7 +2,7 @@ import { Pencil, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { cn } from '@/utils/clsx';
+import { useProcesses } from '@/services/processes';
 import { useGlobalStore } from '@/store';
 import {
   BadgeCopy,
@@ -25,7 +25,7 @@ import {
   TableRow,
   Title,
 } from '@/ui';
-import { useProcesses } from '@/services/processes';
+import { cn } from '@/utils/clsx';
 
 const HomePage = () => {
   // zustand store states
@@ -38,6 +38,20 @@ const HomePage = () => {
   // api
   const { query: data, mutation } = useProcesses();
   const { isPending, data: processes } = data;
+
+  // event handlers
+
+  function handleCreateProcess() {
+    const defaultPage = {
+      title: 'Шаг 1',
+      order: 0,
+      elements: [],
+    };
+    mutation.mutate({
+      name: processName,
+      pages: [defaultPage],
+    });
+  }
 
   return (
     <div className="flex flex-col gap-[60px]">
@@ -78,16 +92,7 @@ const HomePage = () => {
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button
-                  onClick={() =>
-                    mutation.mutate({
-                      name: processName,
-                      pages: [],
-                    })
-                  }
-                >
-                  Создать
-                </Button>
+                <Button onClick={handleCreateProcess}>Создать</Button>
               </DialogClose>
             </DialogFooter>
           </DialogContent>

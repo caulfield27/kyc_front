@@ -1,97 +1,180 @@
 import { create } from 'zustand';
 
-import type { IAction } from '../process/ProcessTypes';
+import type { IElement, IPage } from '@/services/processes/processesTypes';
 
-interface IProcess {
-  name: string;
-  pages: {
-    name: string;
-    id: number;
-    actions: {
-      label: string;
-      description: string;
-      code: string;
-      required: boolean;
-    }[]
-  }[];
-}
+// const currentPage: IPage = {
+//   id: 1,
+//   process_id: 1,
+//   title: 'Идентификация',
+//   order: 0,
+//   elements: [
+//     {
+//       id: 1,
+//       page_id: 1,
+//       element_type_id: 1,
+//       element_type: {
+//         id: 1,
+//         is_full_page: false,
+//         name: 'text',
+//         created_at: new Date().toDateString(),
+//       },
+//       title: 'Дополнительная информация',
+//       field_key: 'info_text',
+//       required: false,
+//       order: 0,
+//     },
+//     {
+//       id: 2,
+//       page_id: 1,
+//       element_type_id: 2,
+//       element_type: {
+//         id: 2,
+//         is_full_page: false,
+//         name: 'income',
+//         created_at: new Date().toDateString(),
+//       },
+//       title: 'Доход в месяц',
+//       field_key: 'info_number',
+//       required: true,
+//       order: 1,
+//     },
+//     {
+//       id: 3,
+//       page_id: 1,
+//       element_type_id: 3,
+//       element_type: {
+//         id: 3,
+//         is_full_page: false,
+//         name: 'date',
+//         created_at: new Date().toDateString(),
+//       },
+//       title: 'Дата',
+//       field_key: 'info_date',
+//       required: true,
+//       order: 2,
+//     },
+//     {
+//       id: 4,
+//       page_id: 1,
+//       element_type_id: 4,
+//       element_type: {
+//         id: 4,
+//         is_full_page: false,
+//         name: 'info_checkbox',
+//         created_at: new Date().toDateString(),
+//       },
+//       title: 'Наличие военного билета',
+//       field_key: 'info_checkbox',
+//       required: true,
+//       order: 3,
+//     },
+//     {
+//       id: 5,
+//       page_id: 1,
+//       element_type_id: 5,
+//       element_type: {
+//         id: 5,
+//         is_full_page: false,
+//         name: 'phone',
+//         created_at: new Date().toDateString(),
+//       },
+//       title: 'Телефон',
+//       field_key: 'phone_otp',
+//       required: true,
+//       order: 4,
+//     },
+//     {
+//       id: 6,
+//       page_id: 1,
+//       element_type_id: 6,
+//       element_type: {
+//         id: 6,
+//         is_full_page: false,
+//         name: 'doc_front',
+//         created_at: new Date().toDateString(),
+//       },
+//       title: 'Паспорт(лицевая)',
+//       field_key: 'regula_ocr_front',
+//       required: true,
+//       order: 5,
+//     },
+//     {
+//       id: 7,
+//       page_id: 1,
+//       element_type_id: 7,
+//       element_type: {
+//         id: 7,
+//         is_full_page: false,
+//         name: 'doc_back',
+//         created_at: new Date().toDateString(),
+//       },
+//       title: 'Паспорт(оборот)',
+//       field_key: 'regula_ocr_back',
+//       required: true,
+//       order: 6,
+//     },
+//     {
+//       id: 8,
+//       page_id: 1,
+//       element_type_id: 8,
+//       element_type: {
+//         id: 8,
+//         is_full_page: false,
+//         name: 'liveness',
+//         created_at: new Date().toDateString(),
+//       },
+//       title: 'Проверка живости',
+//       field_key: 'visionlabs_liveness',
+//       required: true,
+//       order: 7,
+//     },
+//     {
+//       id: 9,
+//       page_id: 1,
+//       element_type_id: 9,
+//       element_type: {
+//         id: 9,
+//         is_full_page: false,
+//         name: 'visionlabs_face_match',
+//         created_at: new Date().toDateString(),
+//       },
+//       title: 'Сравнение лица',
+//       field_key: 'face_match',
+//       required: true,
+//       order: 8,
+//     },
+//     {
+//       id: 10,
+//       page_id: 1,
+//       element_type_id: 10,
+//       element_type: {
+//         id: 10,
+//         is_full_page: false,
+//         name: 'phone',
+//         created_at: new Date().toDateString(),
+//       },
+//       title: 'Доп. документ (опц)',
+//       field_key: 'extra_doc',
+//       required: true,
+//       order: 9,
+//     },
+//   ],
+// };
 
-const currentProcess: IProcess = {
-  name: 'Идентификация',
-  pages: [
-    {
-      name: 'Шаг 1',
-      id: 1,
-      actions: [
-        {
-          label: 'Phone (OTP)',
-          description: 'Телефон',
-          code: 'phone_otp',
-          required: true,
-        },
-        {
-          label: 'Regula Front',
-          description: 'Паспорт (лицевая)',
-          code: 'regula_ocr_front',
-          required: true,
-        },
-      ],
-    },
-    {
-      name: 'Шаг 2',
-      id: 1,
-      actions: [
-        {
-          label: 'Liveness',
-          description: 'Проверка живности',
-          code: 'visionlabs_liveness',
-          required: true,
-        },
-        {
-          label: 'Regula Back',
-          description: 'Паспорт (оборот)',
-          code: 'regula_ocr_back',
-          required: true,
-        },
-        {
-          label: 'Инфо: Текст',
-          description: 'Текст',
-          code: 'info_text',
-          required: true,
-        },
-      ],
-    },
-    {
-      name: 'Шаг 3',
-      id: 1,
-      actions: [
-        {
-          label: 'Инфо: Число',
-          description: 'Число',
-          code: 'info_number',
-          required: true,
-        },
-        {
-          label: 'Инфо: Дата',
-          description: 'Дата',
-          code: 'info_date',
-          required: true,
-        },
-        {
-          label: 'Загрузка файла',
-          description: 'Загрузка файла',
-          code: 'file_upload',
-          required: true,
-        },
-      ],
-    },
-  ],
+type ErrorState = {
+  isError: boolean;
+  errorMsg: string;
 };
 
 interface IStates {
-  process: IProcess;
+  errorState: ErrorState;
+  submissionState: {
+    isSuccess: boolean;
+    redirect_url: string;
+  };
+  page: IPage | null;
   step: number;
-  data: { [key: string]: unknown };
+  inputData: { [key: string]: unknown };
   isLivenessOpen: boolean;
   isDocReaderOpen: boolean;
   passportType: 'front' | 'back';
@@ -99,20 +182,34 @@ interface IStates {
 }
 
 type Actions = {
+  setErrorState: (err: ErrorState) => void;
   setStep: (step: number) => void;
-  setData: (key: string, value: unknown) => void;
+  setInputData: (key: string, value: unknown) => void;
   setLivenessOpen: (payload: boolean) => void;
   setDocReaderOpen: (payload: boolean) => void;
   setPassportType: (type: 'front' | 'back') => void;
   resetValidation: (key: string) => void;
-  nextStep: (actions: IAction[], handleSend?: () => void) => void;
+  nextStep: (actions: IElement[], handleSend: () => void) => void;
+  setPage: (page: IPage) => void;
+  setSubmissionState: (state: {
+    isSuccess: boolean;
+    redirect_url: string;
+  }) => void;
 };
 
 const initialStates: IStates = {
+  errorState: {
+    isError: false,
+    errorMsg: '',
+  },
+  submissionState: {
+    isSuccess: false,
+    redirect_url: '',
+  },
   passportType: 'front',
-  process: currentProcess,
+  page: null,
   step: 1,
-  data: {},
+  inputData: {},
   isDocReaderOpen: false,
   isLivenessOpen: false,
   validation: {},
@@ -120,6 +217,9 @@ const initialStates: IStates = {
 
 export const useFlowStore = create<IStates & Actions>((set, get) => ({
   ...initialStates,
+  setErrorState: (state) => set({ errorState: state }),
+  setSubmissionState: (state) => set({ submissionState: state }),
+  setPage: (page) => set({ page: page }),
   setPassportType: (type) => set({ passportType: type }),
   setLivenessOpen: (payload) => set({ isLivenessOpen: payload }),
   setDocReaderOpen: (payload) => set({ isDocReaderOpen: payload }),
@@ -127,19 +227,19 @@ export const useFlowStore = create<IStates & Actions>((set, get) => ({
   resetValidation: (key: string) => {
     const { validation } = get();
     delete validation[key];
-
     set({
       validation: validation,
     });
   },
-  setData: (key, value) =>
-    set((state) => ({ data: { ...state.data, [key]: value } })),
-  nextStep: (actions, handleSend) => {
-    const { data, step, validation } = get();
+  setInputData: (key, value) =>
+    set((state) => ({ inputData: { ...state.inputData, [key]: value } })),
+  nextStep: (elements, handleSend) => {
+    const { inputData, validation } = get();
     let isValid = true;
-    for (const action of actions) {
-      if (!data[action.code] && action.required) {
-        validation[action.code] = 'Поле обязательно для заполнения';
+    for (const element of elements) {
+      if (!inputData[element.element_type.name] && element.required) {
+        validation[element.element_type.name] =
+          'Поле обязательно для заполнения';
         isValid = false;
       }
     }
@@ -147,11 +247,7 @@ export const useFlowStore = create<IStates & Actions>((set, get) => ({
     set({ validation: validation });
 
     if (isValid) {
-      if (handleSend) {
-        handleSend();
-      } else {
-        set({ step: step + 1 });
-      }
+      handleSend();
     }
   },
 }));

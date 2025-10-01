@@ -19,8 +19,8 @@ import {
   Switch,
 } from '@/ui';
 
-import type { IComponentProps } from './ElementTypes';
 import { useProcessStore } from '../../ProcessStore';
+import type { IComponentProps } from './ElementTypes';
 
 export const ElementCard = memo((props: IComponentProps) => {
   const {
@@ -78,7 +78,7 @@ export const ElementCard = memo((props: IComponentProps) => {
                         <Label htmlFor="desc">Заголовок</Label>
                         <Input
                           id="desc"
-                          defaultValue={changableValues.title}
+                          value={changableValues.title}
                           onChange={(
                             event: React.ChangeEvent<HTMLInputElement>
                           ) =>

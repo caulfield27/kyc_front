@@ -69,7 +69,6 @@ export const ApplySheet = ({
         <Container label="Статус">
           <Select
             onValueChange={(value: string) => setStatus(value as StatusType)}
-            defaultValue={status}
             value={status}
           >
             <SelectTrigger className="w-[180px]">
