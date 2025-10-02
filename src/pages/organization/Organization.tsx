@@ -2,184 +2,152 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { toasterOptions } from '@/constants';
+import { useOrganization } from '@/services/organization';
 import { useGlobalStore } from '@/store/global/globalStore';
-import { Avatar, AvatarImage, Button, Card, Input, Title } from '@/ui';
+import {
+  Avatar,
+  AvatarImage,
+  Button,
+  Card,
+  DataLoader,
+  Input,
+  Status,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Title,
+} from '@/ui';
 import { cn } from '@/utils/clsx';
+
+import { AddDomen, UpdateSheet } from './_components';
 
 const Organization = () => {
   // zustand store states
-  const { organization, updateDomen, addDomen, updateOrgLogo, updateOrgName } =
-    useGlobalStore();
+  const {
+    organizationQuery,
+    domainsQuery,
+    updateOrgMutation,
+    uploadLogoMutation,
+    addDomainMutation,
+    verifyDomainMutation,
+    deleteDomainMutation,
+  } = useOrganization();
 
-  // locale states
-  const spanColor = 'text-neutral-400';
-  const [inputValues, setInputValues] = useState({
-    name: organization.name,
-    logo: organization.logo,
-    primaryColor: '#f76835',
-    secondaryColor: '#ffffff',
-  });
-  const [domen, setDomen] = useState('');
+  const { isPending: isOrgPending, data: organization } = organizationQuery;
+  const { isPending: isDomainsPending, data: domains } = domainsQuery;
+  const { mutate: addDomain, isPending: addDomainPending } = addDomainMutation;
+  const { mutate: verifyDomain, isPending: verifyDomainPending } =
+    verifyDomainMutation;
 
   // event handlers
 
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = event.target;
+  // function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+  //   const { name, value } = event.target;
 
-    if (name === 'logo') {
-      const file = event.target?.files?.[0];
-      if (file) {
-        const logoUrl = URL.createObjectURL(file);
-        setInputValues((prev) => ({ ...prev, logo: logoUrl }));
-      }
-    } else {
-      setInputValues((prev) => ({ ...prev, [name]: value }));
-    }
-  }
-
-  function handleSaveChanges() {
-    updateOrgLogo(inputValues.logo);
-    updateOrgName(inputValues.name);
-    const root = document.documentElement;
-
-    root.style.setProperty('--primary', inputValues.primaryColor);
-    root.style.setProperty('--accent', inputValues.primaryColor);
-    root.style.setProperty('--ring', inputValues.primaryColor);
-    root.style.setProperty('--primary-foreground', inputValues.secondaryColor);
-
-    toast.success('Изменения успешно сохранены', toasterOptions['success']);
-  }
-
-  function handleAddDomen() {
-    addDomen(domen);
-    setDomen('');
-  }
+  //   if (name === 'logo') {
+  //     const file = event.target?.files?.[0];
+  //     if (file) {
+  //       const logoUrl = URL.createObjectURL(file);
+  //       setInputValues((prev) => ({ ...prev, logo: logoUrl }));
+  //     }
+  //   } else {
+  //     setInputValues((prev) => ({ ...prev, [name]: value }));
+  //   }
+  // }
 
   return (
     <div className="flex flex-col gap-12">
       <Title text="Организация и бренд" />
-      <div className="flex flex-row gap-5">
-        <Card className="w-[50%] h-fit p-4">
-          <div>
-            <span className={spanColor}>Наименование</span>
-            <Input
-              value={inputValues.name}
-              onChange={handleInputChange}
-              name="name"
-            />
-          </div>
-          <div>
-            <span className={spanColor}>Логотип</span>
-            {inputValues.logo ? (
-              <div className="flex flex-row gap-5">
-                <Avatar>
-                  <AvatarImage src={inputValues.logo} alt="Лого" />
-                </Avatar>
-                <Button
-                  variant={'outline'}
-                  onClick={() =>
-                    setInputValues((prev) => ({ ...prev, logo: null }))
-                  }
-                >
-                  Удалить
-                </Button>
-              </div>
-            ) : (
-              <Input
-                onChange={handleInputChange}
-                name="logo"
-                className="cursor-pointer"
-                type="file"
-                accept=".png"
-              />
-            )}
-          </div>
-          <div className="flex flex-row gap-2">
-            <div className="w-[50%]">
-              <span className={spanColor}>Основной цвет</span>
-              <Input
-                onChange={handleInputChange}
-                name="primaryColor"
-                className="cursor-pointer"
-                value={inputValues.primaryColor}
-                type="color"
-              />
-            </div>
-            <div className="w-[50%]">
-              <span className={spanColor}>Дополнительный цвет</span>
-              <Input
-                onChange={handleInputChange}
-                name="secondaryColor"
-                className="cursor-pointer"
-                value={inputValues.secondaryColor}
-                type="color"
-              />
+      <div className="flex flex-col gap-[60px]">
+        {isOrgPending ? (
+          <DataLoader size="m" />
+        ) : (
+          <div className="flex flex-col gap-[24px]">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-[#f5f5f5]">
+                  <TableHead>Название</TableHead>
+                  <TableHead>Логотип</TableHead>
+                  <TableHead>Основной цвет</TableHead>
+                  <TableHead>Дополнительный цвет</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Humo</TableCell>
+                  <TableCell>Файл не выбран</TableCell>
+                  <TableCell>
+                    <div
+                      className={cn(
+                        'w-[24px] h-[24px] rounded-[50%] bg-primary'
+                      )}
+                    ></div>
+                  </TableCell>
+                  <TableCell>
+                    <div
+                      className={cn(
+                        'w-[24px] h-[24px] rounded-[50%] bg-foreground'
+                      )}
+                    ></div>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+            <div className="w-ful flex justify-end">
+              <UpdateSheet />
             </div>
           </div>
-          <Button onClick={handleSaveChanges}>Сохранить</Button>
-        </Card>
-        <Card className="w-[50%] h-fit p-4">
-          <div>
-            <span className="font-bold text-neutral-800">Домены</span>
-          </div>
-          <div className="flex flex-col gap-4">
-            <div className="flex w-full max-w-sm items-center gap-2">
-              <Input
-                value={domen}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setDomen(event.target.value)
-                }
-                type="text"
-                placeholder="example.com"
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                  if (e.key !== 'Enter') return;
-                  handleAddDomen();
-                }}
-              />
-              <Button
-                onClick={handleAddDomen}
-                disabled={!domen}
-                type="submit"
-                variant="outline"
-              >
-                Добавить
-              </Button>
-            </div>
-            <div className="flex flex-col gap-2.5">
-              {organization.domens.map((domen) => {
-                return (
-                  <div
-                    className="p-2.5 rounded-[8px] border-[1px] border-neutral-300 flex flex-row items-center justify-between"
-                    key={domen.value}
-                  >
-                    <div className="flex flex-col">
-                      <span className="font-bold text-neutral-700">
-                        {domen.value}
-                      </span>
-                      <span
+        )}
+
+        {isDomainsPending ? (
+          <DataLoader size="m" />
+        ) : (
+          <div className="flex flex-col gap-[24px]">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-[#f5f5f5]">
+                  <TableHead>Название</TableHead>
+                  <TableHead>Статус</TableHead>
+                  <TableHead className="text-end">Действия</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {domains?.map((domain) => (
+                  <TableRow key={domain.id}>
+                    <TableCell>{domain.domain}</TableCell>
+                    <TableCell>
+                      <Status
                         className={cn(
-                          'text-[12px] font-light text-red-600',
-                          domen.isValid && 'text-green-600'
+                          'text-[#E03E3E] bg-[#FDF3F3]',
+                          domain.verified && 'text-[#16A34A] bg-[#DCFCE7]'
                         )}
                       >
-                        {domen.isValid ? 'Проверен' : 'Не проверен'}
-                      </span>
-                    </div>
-                    <Button
-                      onClick={() => {
-                        updateDomen(domen.value);
-                        setDomen('');
-                      }}
-                      variant={'outline'}
-                    >
-                      Проверить
-                    </Button>
-                  </div>
-                );
-              })}
+                        {domain.verified ? 'Проверен' : 'Не проверен'}
+                      </Status>
+                    </TableCell>
+                    <TableCell className="text-end">
+                      {!domain.verified && (
+                        <Button
+                          onClick={() => verifyDomain(domain.id)}
+                          variant={'outline'}
+                          disabled={verifyDomainPending}
+                        >
+                          Проверить домен
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <div className="w-ful flex justify-end">
+              <AddDomen addDomain={addDomain} isPending={addDomainPending} />
             </div>
           </div>
-        </Card>
+        )}
       </div>
     </div>
   );

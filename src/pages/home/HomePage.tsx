@@ -17,6 +17,7 @@ import {
   DialogTrigger,
   Input,
   Label,
+  Status,
   Table,
   TableBody,
   TableCell,
@@ -128,14 +129,14 @@ const HomePage = () => {
                     </TableCell>
                     <TableCell>{row.created_at}</TableCell>
                     <TableCell>
-                      <div
+                      <Status
                         className={cn(
-                          'font-semibold w-fit rounded-[100px] py-1 px-2.5 text-[#16A34A]  bg-[#DCFCE7]',
+                          'text-[#16A34A]  bg-[#DCFCE7]',
                           !row.published && 'bg-[#fed7aa] text-[#eb2f00]'
                         )}
                       >
                         {row.published ? 'Опубликовано' : 'В обработке'}
-                      </div>
+                      </Status>
                     </TableCell>
                     <TableCell>
                       <Button

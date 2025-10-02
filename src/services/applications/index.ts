@@ -1,3 +1,13 @@
-import { useApplicationById, useApplications } from './useApplications';
+import {
+  useApplicationById,
+  useApplicationMutation,
+  useApplications,
+  useFileUpload,
+} from './useApplications';
 
-export { useApplicationById, useApplications };
+export {
+  useApplicationById,
+  useApplicationMutation,
+  useApplications,
+  useFileUpload,
+};

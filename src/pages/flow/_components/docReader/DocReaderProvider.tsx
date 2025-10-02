@@ -1,54 +1,47 @@
+import type { IFileResponse } from '@/services/applications/applicationTypes';
 import type { IElement } from '@/services/processes/processesTypes';
-import { Button, Card, Label } from '@/ui';
+import { Button, Card } from '@/ui';
 import { cn } from '@/utils/clsx';
 
 import { useFlowStore } from '../../FlowStore';
+import { FileInfo } from '../fileInfo/FileInfo';
 
 const DocReaderProvider = ({ process }: { process: IElement }) => {
-  const { element_type, title, required } = process;
+  const { field_key, title, required } = process;
   const { inputData, setDocReaderOpen, setPassportType, resetValidation } =
     useFlowStore();
-  const { name } = element_type;
-
-  if (inputData[name]) {
-    return (
-      <div className="flex flex-col gap-3 max-w-[500px]">
-        <Label
-          className={cn(required && 'after:content-["*"] after:text-[#ff0000]')}
-        >
-          {title}
-        </Label>
-        <img
-          className="rounded-2xl"
-          src={`data:image/png;base64,${inputData[name]}`}
-          alt={title}
-        />
-      </div>
-    );
-  }
+  const data = inputData[field_key] as IFileResponse | undefined;
 
   return (
     <Card className="py-2.5 px-3.5">
       <div className="flex flex-row justify-between items-center">
-        <span
-          className={cn(required && 'after:content-["*"] after:text-[#ff0000]')}
-        >
-          {title}
-        </span>
-        <Button
-          onClick={() => {
-            resetValidation(name);
-            if (name.endsWith('front')) {
-              setPassportType('front');
-            } else {
-              setPassportType('back');
-            }
+        {data ? (
+          <FileInfo data={data} />
+        ) : (
+          <>
+            <span
+              className={cn(
+                required && 'after:content-["*"] after:text-[#ff0000]'
+              )}
+            >
+              {title}
+            </span>
+            <Button
+              onClick={() => {
+                resetValidation(field_key);
+                if (field_key.endsWith('front')) {
+                  setPassportType('front');
+                } else {
+                  setPassportType('back');
+                }
 
-            setDocReaderOpen(true);
-          }}
-        >
-          Начать
-        </Button>
+                setDocReaderOpen(true);
+              }}
+            >
+              Начать
+            </Button>
+          </>
+        )}
       </div>
     </Card>
   );

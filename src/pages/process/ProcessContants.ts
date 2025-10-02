@@ -7,28 +7,13 @@ export const elementsDetails: {
 } = {
   info_text: {
     element_type_id: 1,
-    field_key: 'info_text',
+    field_key: 'extra_info',
     title: 'Дополнительная информация',
   },
   info_number: {
     element_type_id: 2,
     field_key: 'income',
     title: 'Доход в месяц',
-  },
-  info_date: {
-    element_type_id: 3,
-    field_key: 'date',
-    title: 'Дата заявки',
-  },
-  info_list: {
-    element_type_id: 4,
-    field_key: 'info_list',
-    title: 'Список',
-  },
-  info_checkbox: {
-    element_type_id: 5,
-    field_key: 'info_checkbox',
-    title: 'Чекбокс',
   },
   phone_otp: {
     element_type_id: 6,

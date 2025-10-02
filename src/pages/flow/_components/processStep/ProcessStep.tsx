@@ -8,14 +8,14 @@ import { DynamicField } from '../dynamicField/DynamicField';
 import FaceScanProvider from '../faceRecognition/FaceScanProvider';
 
 const component: { [key: string]: (data: IElement) => ReactElement } = {
-  phone_otp: (data) => <DynamicField data={data} />,
-  regula_ocr_front: (data) => <DocReaderProvider process={data} />,
-  visionlabs_liveness: (data) => <FaceScanProvider process={data} />,
-  visionlabs_face_match: (data) => <FaceScanProvider process={data} />,
-  regula_ocr_back: (data) => <DocReaderProvider process={data} />,
-  info_text: (data) => <DynamicField data={data} />,
-  info_number: (data) => <DynamicField data={data} />,
-  file_upload: (data) => <DynamicField data={data} />,
+  phone: (data) => <DynamicField data={data} />,
+  doc_front: (data) => <DocReaderProvider process={data} />,
+  liveness: (data) => <FaceScanProvider process={data} />,
+  face_match: (data) => <FaceScanProvider process={data} />,
+  doc_back: (data) => <DocReaderProvider process={data} />,
+  extra_info: (data) => <DynamicField data={data} />,
+  income: (data) => <DynamicField data={data} />,
+  extra_doc: (data) => <DynamicField data={data} />,
 };
 
 export const ProcessStep = () => {
@@ -27,12 +27,12 @@ export const ProcessStep = () => {
         return (
           <div className="w-full" key={element.id}>
             <div className="w-full">
-              {!!component[element.element_type.name] &&
-                component[element.element_type.name](element)}
+              {!!component[element.field_key] &&
+                component[element.field_key](element)}
             </div>
-            {!!validation[element.element_type.name] && (
+            {!!validation[element.field_key] && (
               <span className="text-red-500 font-light text-[14px]">
-                {validation[element.element_type.name]}
+                {validation[element.field_key]}
               </span>
             )}
           </div>

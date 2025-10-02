@@ -1,13 +1,15 @@
+import { Plus } from 'lucide-react';
+import { type Dispatch, memo, type SetStateAction } from 'react';
+
 import type {
   IElement,
   IElementType,
 } from '@/services/processes/processesTypes';
 import { useElements } from '@/services/processes/useProcesses';
 import { DataLoader } from '@/ui';
-import { memo, type Dispatch, type SetStateAction } from 'react';
-import { elementsDetails } from '../../ProcessContants';
 import { cn } from '@/utils/clsx';
-import { Plus } from 'lucide-react';
+
+import { elementsDetails } from '../../ProcessContants';
 
 export const ElementsList = memo(
   ({
@@ -22,7 +24,7 @@ export const ElementsList = memo(
     function handleAddElement(element: IElementType) {
       const newElement: IElement = {
         element_type: element,
-        field_key: element.name,
+        field_key: elementsDetails[element.name].field_key,
         title: elementsDetails[element.name].title ?? '',
         element_type_id: elementsDetails[element.name].element_type_id ?? 0,
         required: true,

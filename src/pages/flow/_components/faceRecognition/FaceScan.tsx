@@ -1,4 +1,7 @@
 import { useEffect, useRef } from 'react';
+import { useParams } from 'react-router';
+
+import { useFileUpload } from '@/services/applications';
 
 import { useFlowStore } from '../../FlowStore';
 import styles from './FaceScan.module.css';
@@ -7,8 +10,9 @@ import { setupCanvas } from './FaceScanUtils';
 
 export const FaceScan = () => {
   // ZUSTAND STORE STATES
-  const { init, instruction, loadingText } = useFaceScanStore();
-  const { setInputData, setLivenessOpen } = useFlowStore();
+  const { init, instruction, loadingText, setFileMutationFn, setSlug } =
+    useFaceScanStore();
+  const { setInputData, setCurrentSubmissionId } = useFlowStore();
 
   // DOM REFS
   const visionRef = useRef<HTMLDivElement | null>(null);
@@ -16,8 +20,18 @@ export const FaceScan = () => {
   const canvasSemicirclesRef = useRef<HTMLCanvasElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  // API
+  const { slug } = useParams();
+  const { mutate } = useFileUpload(setInputData, setCurrentSubmissionId);
+
   // EFFECT HANDLERS
   useEffect(() => {
+    if (slug) {
+      setSlug(slug);
+    }
+
+    setFileMutationFn(mutate);
+
     const vision = visionRef.current;
     const canvasSemicircles = canvasSemicirclesRef.current;
     const canvas = canvasRef.current;
@@ -35,15 +49,6 @@ export const FaceScan = () => {
     if (canvas && videoContainer) {
       setupCanvas(canvas, videoContainer);
     }
-
-    const timerId = setTimeout(() => {
-      setLivenessOpen(false);
-      setInputData('visionlabs_liveness', 85);
-    }, 4000);
-
-    return () => {
-      clearTimeout(timerId);
-    };
   }, []);
 
   return (

@@ -1,46 +1,52 @@
 import { useParams } from 'react-router';
 
-import type { IFile } from '@/services/applications/applicationTypes';
-import { useFileUpload } from '@/services/applications/useApplications';
+import { useFileUpload } from '@/services/applications';
+import type {
+  IFile,
+  IFileResponse,
+} from '@/services/applications/applicationTypes';
 import type { IElement } from '@/services/processes/processesTypes';
-import { Input, Label } from '@/ui';
+import { Card, Input, Label } from '@/ui';
 import { cn } from '@/utils/clsx';
 
 import { useFlowStore } from '../../FlowStore';
+import { FileInfo } from '../fileInfo/FileInfo';
 
 export const DynamicField = ({ data }: { data: IElement }) => {
   // zusrtand store states
-  const { inputData, setInputData, resetValidation } = useFlowStore();
+  const {
+    inputData,
+    setInputData,
+    resetValidation,
+    setCurrentSubmissionId,
+    current_submission_id,
+  } = useFlowStore();
 
   // locale states
   const { slug } = useParams();
-  const { element_type, title, required } = data;
-  const { name } = element_type;
+  const { field_key, title, required } = data;
   const type =
-    name === 'file_upload'
+    field_key === 'extra_doc'
       ? 'file'
-      : name === 'info_number'
+      : field_key === 'income'
         ? 'number'
         : 'text';
-  const inputValue =
-    type === 'file'
-      ? ((inputData[name] as IFile)?.filename ?? '')
-      : inputData[name];
+  const inputValue = type === 'file' ? '' : (inputData[field_key] ?? '');
   // api
-  const { mutate } = useFileUpload(slug ?? '', setInputData);
+  const { mutate } = useFileUpload(setInputData, setCurrentSubmissionId);
 
   //  event handlers
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
-    if (name === 'file_upload') {
+    if (name === 'extra_doc') {
       const file = event.target.files?.[0];
       if (file) {
         const reader = new FileReader();
         reader.readAsDataURL(file);
 
         reader.onload = () => {
-          mutate({
+          const payload: IFile = {
             field_key: name,
             filename: file.name,
             content:
@@ -48,7 +54,11 @@ export const DynamicField = ({ data }: { data: IElement }) => {
                 ? reader.result.split(',')[1]
                 : '',
             is_integration_result: false,
-          });
+            slug: slug ?? '',
+          };
+          if (current_submission_id)
+            payload['submission_id'] = current_submission_id;
+          mutate(payload);
         };
       }
     } else {
@@ -59,21 +69,29 @@ export const DynamicField = ({ data }: { data: IElement }) => {
   return (
     <div className="grid w-full items-center gap-3">
       <Label
-        htmlFor={name}
+        htmlFor={field_key}
         className={cn(required && 'after:content-["*"] after:text-[#ff0000]')}
       >
         {title}
       </Label>
-      <Input
-        value={(inputValue as string) ?? ''}
-        name={name}
-        onFocus={() => resetValidation(name)}
-        className="w-full bg-[#fff]"
-        type={type}
-        id={name}
-        placeholder={title}
-        onChange={handleChange}
-      />
+      {type === 'file' && inputData[field_key] ? (
+        <Card className="py-2.5 px-3.5">
+          <div className="flex flex-row justify-between items-center">
+            <FileInfo data={inputData[field_key] as IFileResponse} />
+          </div>
+        </Card>
+      ) : (
+        <Input
+          value={inputValue as string}
+          name={field_key}
+          onFocus={() => resetValidation(field_key)}
+          className="w-full bg-[#fff]"
+          type={type}
+          id={field_key}
+          placeholder={title}
+          onChange={handleChange}
+        />
+      )}
     </div>
   );
 };

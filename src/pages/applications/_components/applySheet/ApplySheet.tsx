@@ -1,8 +1,10 @@
 import { type ReactNode, useMemo, useState } from 'react';
 
+import { useApplicationById } from '@/services/applications';
 import {
   Button,
   Card,
+  DataLoader,
   Label,
   Select,
   SelectContent,
@@ -18,7 +20,6 @@ import {
   Text,
 } from '@/ui';
 
-import type { IApplication, StatusType } from '../../ApplicationsTypes';
 import { generateStatusData } from './ApplySheetUtils';
 
 const Container = ({
@@ -36,37 +37,41 @@ const Container = ({
   );
 };
 
-export const ApplySheet = ({
-  apply,
-  onChange,
-}: {
-  apply: IApplication;
-  onChange: (newStatus: StatusType, id: number) => void;
-}) => {
+export const ApplySheet = ({ id }: { id: number }) => {
   // locale states
-  const [status, setStatus] = useState<StatusType>(apply.status);
-  const { data, files } = useMemo(
-    () => generateStatusData(apply.data),
-    [apply]
-  );
+  // const [status, setStatus] = useState<StatusType>(apply.status);
+  // const { data, files } = useMemo(
+  //   () => generateStatusData(apply.data),
+  //   [apply]
+  // );
 
   // event handlers
-  const handleDownload = (blob: string, key: string) => {
-    const link = document.createElement('a');
-    link.href = `data:image/png;base64,${blob}`;
-    link.download = key || 'image.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  // const handleDownload = (blob: string, key: string) => {
+  //   const link = document.createElement('a');
+  //   link.href = `data:image/png;base64,${blob}`;
+  //   link.download = key || 'image.png';
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
+
+  // api
+  const { data: apply, isPending } = useApplicationById(id);
+  const fields = apply ? apply.fields : [];
+  const files = apply ? apply.files : [];
+  console.log(fields, files);
 
   return (
     <SheetContent>
       <SheetHeader>
-        <SheetTitle>{`Заявка #${apply.id}`}</SheetTitle>
+        <SheetTitle>{'Данные клиента'}</SheetTitle>
       </SheetHeader>
       <div className="px-3.5 flex flex-col gap-5 w-full h-[90vh] overflow-y-auto">
-        <Container label="Статус">
+        {isPending ? (
+          <DataLoader size="m" />
+        ) : (
+          <>
+            {/* <Container label="Статус">
           <Select
             onValueChange={(value: string) => setStatus(value as StatusType)}
             value={status}
@@ -83,10 +88,10 @@ export const ApplySheet = ({
               </SelectGroup>
             </SelectContent>
           </Select>
-        </Container>
-        <Container label="Данные заявки">
-          <Card className="w-full p-2.5">
-            <ul className="flex flex-col gap-3">
+        </Container> */}
+            <Container label="Данные заявки">
+              <Card className="w-full p-2.5">
+                {/* <ul className="flex flex-col gap-3">
               {data.length ? (
                 data.map((data) => {
                   return (
@@ -109,11 +114,12 @@ export const ApplySheet = ({
               ) : (
                 <Text content="Нет данных" />
               )}
-            </ul>
-          </Card>
-        </Container>
-        <Container label="Файлы">
-          <div className="w-full py-4 flex flex-col gap-5">
+            </ul> */}
+              </Card>
+            </Container>
+            <Container label="Файлы">
+              <></>
+              {/* <div className="w-full py-4 flex flex-col gap-5">
             {files.length ? (
               files.map((file) => (
                 <div className="flex flex-col gap-4">
@@ -134,21 +140,22 @@ export const ApplySheet = ({
             ) : (
               <Text content="Нет файлов" />
             )}
-          </div>
-        </Container>
+          </div> */}
+            </Container>
+          </>
+        )}
       </div>
-      <SheetFooter>
+      <SheetFooter className="flex-row">
         <SheetClose asChild>
-          <Button
-            disabled={status === apply.status}
+          {/* <Button
             type="submit"
             onClick={() => onChange(status, apply.id)}
           >
             Применить
-          </Button>
+          </Button> */}
         </SheetClose>
         <SheetClose asChild>
-          <Button variant="outline">Отмена</Button>
+          <Button variant="outline">Назад</Button>
         </SheetClose>
       </SheetFooter>
     </SheetContent>

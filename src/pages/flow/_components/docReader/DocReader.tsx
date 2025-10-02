@@ -11,7 +11,8 @@ import {
 import { type CSSProperties, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { useFileUpload } from '@/services/applications/useApplications';
+import { useFileUpload } from '@/services/applications';
+import type { IFile } from '@/services/applications/applicationTypes';
 import { Loader } from '@/ui';
 
 import { useFlowStore } from '../../FlowStore';
@@ -29,7 +30,13 @@ const containerStyle: CSSProperties = {
 
 export function Passport() {
   // zustand store states
-  const { setInputData, setDocReaderOpen, passportType } = useFlowStore();
+  const {
+    setInputData,
+    setDocReaderOpen,
+    passportType,
+    setCurrentSubmissionId,
+    current_submission_id,
+  } = useFlowStore();
 
   // locale states
   const { slug } = useParams();
@@ -38,7 +45,7 @@ export function Passport() {
   const [loading, setLoading] = useState(true);
 
   // api
-  const { mutate } = useFileUpload(slug ?? '', setInputData);
+  const { mutate } = useFileUpload(setInputData, setCurrentSubmissionId);
 
   // event handlers
   const listener = (
@@ -53,7 +60,7 @@ export function Passport() {
     }
 
     if (data.detail.action === EventActions.SERVICE_INITIALIZED) {
-      //   setLoading(true);
+      setLoading(true);
     } else if (
       data.detail.action === EventActions.PROCESS_FINISHED ||
       data.detail.action === EventActions.CAMERA_PROCESS_STARTED
@@ -71,16 +78,19 @@ export function Passport() {
           GraphicFieldType.DOCUMENT_FRONT
         )?.valueList[1].value;
         if (value) {
-          const key = `regula_ocr_${passportType}`;
-          mutate({
-            field_key: key,
+          const payload: IFile = {
+            field_key: `doc_${passportType}`,
             filename:
               passportType === 'front'
                 ? 'passport_front.png'
                 : 'passport_back.png',
             content: value,
             is_integration_result: false,
-          });
+            slug: slug ?? '',
+          };
+          if (current_submission_id)
+            payload['submission_id'] = current_submission_id;
+          mutate(payload);
         }
         setDocReaderOpen(false);
         //todo
@@ -97,15 +107,16 @@ export function Passport() {
     const containerCurrent = containerRef.current;
 
     window.RegulaDocumentSDK = new DocumentReaderService();
+    window.RegulaDocumentSDK.workerPath = window.location.origin;
     window.RegulaDocumentSDK.recognizerProcessParam = {
       processParam: {
-        scenario: InternalScenarios.Barcode,
+        scenario: InternalScenarios.Locate,
         multipageProcessing: false,
       },
     };
     window.RegulaDocumentSDK.imageProcessParam = {
       processParam: {
-        scenario: InternalScenarios.Barcode,
+        scenario: InternalScenarios.Locate,
       },
     };
 
@@ -129,6 +140,7 @@ export function Passport() {
 
     if (!documentReader) return;
     documentReader.settings = {
+      locale: 'ru',
       changeCameraButton: true,
       cameraFrameBorderWidth: 2,
       uploadFileButton: false,

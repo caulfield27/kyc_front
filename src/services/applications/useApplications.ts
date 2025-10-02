@@ -56,7 +56,8 @@ export const useApplicationMutation = (
   setSuccessState: (newState: {
     isSuccess: boolean;
     redirect_url: string;
-  }) => void
+  }) => void,
+  setCurrentSubmissionId: (id: number) => void
 ) => {
   const mutation = useMutation({
     mutationFn: (data: ISubmitData) => submitPublicForm(data, slug),
@@ -71,6 +72,7 @@ export const useApplicationMutation = (
           redirect_url,
         });
       }
+      setCurrentSubmissionId(data.submission_id);
     },
   });
 
@@ -78,14 +80,19 @@ export const useApplicationMutation = (
 };
 
 export const useFileUpload = (
-  slug: string,
-  setInputData: (key: string, value: IFileResponse) => void
+  setInputData: (key: string, value: IFileResponse) => void,
+  setCurrentSubmissionId: (id: number) => void
 ) => {
   const mutation = useMutation({
-    mutationFn: (data: IFile) => uploadFile(data, slug),
+    mutationFn: (data: IFile) => uploadFile(data),
+    onMutate: () => {
+      toast.loading('Загружаем файл...', toasterOptions['loading']);
+    },
     onSuccess: (data) => {
+      toast.dismiss(TOAST_LOADER_ID);
       toast.success('Файл успешно загружен', toasterOptions['success']);
-      setInputData(data.file_key, data);
+      setInputData(data.field_key, data);
+      setCurrentSubmissionId(data.submission_id);
     },
   });
 

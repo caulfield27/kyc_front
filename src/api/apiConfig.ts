@@ -8,6 +8,7 @@ import { getToken } from '@/utils/getToken';
 import type { IResponseError } from './apiTypes';
 
 export const baseUrl = import.meta.env.VITE_BACKEND_URL;
+export const ws_connection = import.meta.env.VITE_WS_CONNECTION;
 
 // private axios instanse
 export const sendRequest = axios.create({
@@ -25,12 +26,11 @@ sendRequest.interceptors.response.use(
   },
   (err: AxiosError<IResponseError>) => {
     const status = err.response?.status;
+    toast.dismiss(TOAST_LOADER_ID);
     if (status === 422 || status === 401 || status === 403) {
       const errorMsg = Array.isArray(err?.response?.data?.detail)
         ? (err?.response?.data?.detail?.[0].msg ?? 'Ошибка запрса!')
         : (err?.response?.data?.detail ?? 'Ошибка запрса!');
-
-      toast.dismiss(TOAST_LOADER_ID);
       toast.error(errorMsg, toasterOptions['error']);
     }
 
@@ -58,6 +58,7 @@ publicRequest.interceptors.response.use(
       ? (err?.response?.data?.detail?.[0].msg ?? 'Неизвестная ошибка')
       : (err?.response?.data?.detail ?? 'Неизвестная ошибка');
 
+    toast.dismiss(TOAST_LOADER_ID);
     setErrorState({
       isError: true,
       errorMsg,

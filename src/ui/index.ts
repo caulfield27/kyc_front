@@ -23,6 +23,7 @@ import {
 } from './card/Card';
 import { Checkbox } from './checkbox/Checkbox';
 import { BadgeCopy } from './copyBadge/CopyBadge';
+import { DataLoader } from './dataLoader/DataLoader';
 import {
   Dialog,
   DialogClose,
@@ -110,6 +111,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from './sidebar/Sidebar';
+import Status from './status/Status';
 import { Switch } from './switch/Switch';
 import {
   Table,
@@ -129,10 +131,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './tooltip/Tooltip';
-import { DataLoader } from './dataLoader/DataLoader';
 
 export {
-  DataLoader,
   Alert,
   AlertDescription,
   AlertTitle,
@@ -158,6 +158,7 @@ export {
   CardHeader,
   CardTitle,
   Checkbox,
+  DataLoader,
   Dialog,
   DialogClose,
   DialogContent,
@@ -230,6 +231,7 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
+  Status,
   Switch,
   Table,
   TableBody,

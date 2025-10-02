@@ -1,5 +1,8 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ORG_KEYS } from './organizationConstants';
+import { toast } from 'sonner';
+
+import { toasterOptions } from '@/constants';
+
 import {
   addDomain,
   deleteDomen,
@@ -9,8 +12,7 @@ import {
   uploadLogo,
   verifyDomen,
 } from './organizationApi';
-import { toast } from 'sonner';
-import { toasterOptions } from '@/constants';
+import { ORG_KEYS } from './organizationConstants';
 
 export const useOrganization = () => {
   const organizationQuery = useQuery({
@@ -49,9 +51,13 @@ export const useOrganization = () => {
 
   const verifyDomainMutation = useMutation({
     mutationFn: verifyDomen,
-    onSuccess: () => {
-      toast.success('Домен успешно обновлен', toasterOptions['success']);
-      domainsQuery.refetch();
+    onSuccess: (data) => {
+      if (data?.message.endsWith('failed')) {
+        toast.error('Домен не прошел верификацию', toasterOptions['error']);
+      } else {
+        toast.success('Домен успешно обновлен', toasterOptions['success']);
+        domainsQuery.refetch();
+      }
     },
   });
 

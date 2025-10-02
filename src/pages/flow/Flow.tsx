@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router';
 
-import { useApplicationMutation } from '@/services/applications/useApplications';
+import { useApplicationMutation } from '@/services/applications';
 import { useProcessForm } from '@/services/processes/useProcesses';
 import { Button, Label, Loader, Title } from '@/ui';
 
@@ -21,6 +21,9 @@ const Flow = () => {
     submissionState,
     setSubmissionState,
     errorState,
+    nextStep,
+    page,
+    setCurrentSubmissionId,
   } = useFlowStore();
 
   // locale states
@@ -31,7 +34,8 @@ const Flow = () => {
   const { mutate, isPending: mutationPending } = useApplicationMutation(
     slug ?? '',
     setStep,
-    setSubmissionState
+    setSubmissionState,
+    setCurrentSubmissionId
   );
 
   // effect handlers
@@ -58,7 +62,7 @@ const Flow = () => {
       data: generatePayload(inputData),
       is_final: step === process?.total,
     };
-    mutate(payload);
+    nextStep(page?.elements ?? [], () => mutate(payload));
   }
 
   switch (true) {
@@ -86,7 +90,7 @@ const Flow = () => {
           <div className="w-full flex justify-end mt-5">
             {step === process?.total ? (
               <Button disabled={mutationPending} onClick={handleSend}>
-                {mutationPending ? 'Отправляем' : 'Отправить'}
+                {mutationPending ? 'Отправляем...' : 'Отправить'}
               </Button>
             ) : (
               <Button
@@ -94,7 +98,7 @@ const Flow = () => {
                 variant={'outline'}
                 onClick={handleSend}
               >
-                {mutationPending ? 'отправляем...' : 'Далее'}
+                {mutationPending ? 'Отправляем...' : 'Далее'}
               </Button>
             )}
           </div>

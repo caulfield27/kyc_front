@@ -65,12 +65,9 @@ export async function submitPublicForm(
   }
 }
 
-export async function uploadFile(
-  data: IFile,
-  slug: string
-): Promise<IFileResponse> {
+export async function uploadFile(data: IFile): Promise<IFileResponse> {
   try {
-    const response = await publicRequest.post(UPLOAD_FILE(slug), data);
+    const response = await publicRequest.post(UPLOAD_FILE, data);
     return response.data;
   } catch (e) {
     console.error(e);

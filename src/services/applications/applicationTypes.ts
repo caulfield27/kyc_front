@@ -1,6 +1,7 @@
 import type { IProcess } from '../processes/processesTypes';
 
 export type ApplyStatus =
+  | ''
   | 'new'
   | 'processing'
   | 'in_review'
@@ -40,6 +41,7 @@ export interface ISubmitData {
   step: number;
   data: { [key: string]: unknown };
   is_final: boolean;
+  submission_id?: number;
 }
 
 export interface ISubmitResponse {
@@ -56,13 +58,16 @@ export interface IFile {
   filename: string;
   content: string;
   is_integration_result: boolean;
+  slug: string;
+  submission_id?: number;
 }
 
 export interface IFileResponse {
   file_id: number;
-  file_key: string;
+  field_key: string;
   filename: string;
   mimetype: string;
   size_bytes: number;
   message: string;
+  submission_id: number;
 }

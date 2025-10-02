@@ -1,4 +1,4 @@
-export const ORG_DASHBOARD = 'organizations/dashboard/';
+export const ORG_DASHBOARD = 'organizations/dashboard';
 export const UPLOAD_LOGO = 'organizations/logo';
 export const ORG_UPDATE = 'organizations/';
 export const DOMAINS = 'organizations/domains';
