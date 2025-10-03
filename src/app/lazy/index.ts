@@ -11,3 +11,5 @@ export const LazyProcess = lazy(() => import('../../pages/process'));
 export const LazyOrganization = lazy(() => import('../../pages/organization'));
 
 export const LazyFlow = lazy(() => import('../../pages/flow'));
+
+export const LazyRoles = lazy(() => import('../../pages/roles'));

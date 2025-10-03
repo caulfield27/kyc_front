@@ -9,6 +9,7 @@ import {
   LazyLogin,
   LazyOrganization,
   LazyProcess,
+  LazyRoles,
 } from '@/app/lazy';
 import { Loader } from '@/ui';
 
@@ -34,6 +35,10 @@ export const routes = createBrowserRouter([
       {
         path: 'process/:id',
         element: <LazyProcess />,
+      },
+      {
+        path: 'roles',
+        element: <LazyRoles />,
       },
     ],
   },

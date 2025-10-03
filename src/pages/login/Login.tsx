@@ -1,7 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 
+import { useLoginMutauion } from '@/services/auth';
 import {
   Button,
   Form,
@@ -12,12 +15,9 @@ import {
   FormMessage,
   Input,
 } from '@/ui';
+import { cn } from '@/utils/clsx';
 
 import { FormSchema } from './LoginValidation';
-import { useEffect, useState } from 'react';
-import { useLoginMutauion } from '@/services/auth';
-import { cn } from '@/utils/clsx';
-import { Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
   // locale states
@@ -38,7 +38,7 @@ const Login = () => {
   // event handlers
   function onSubmit(data: z.infer<typeof FormSchema>) {
     mutation.mutate(data);
-  };
+  }
 
   // effect handlers
   useEffect(() => {
@@ -51,11 +51,11 @@ const Login = () => {
   }, []);
 
   return (
-    <div className="flex h-screen w-scree flex-col items-center justify-center">
+    <div className="flex h-screen w-scree flex-col items-center justify-center max-[500px]:px-4">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-2/3 space-y-6 bg-white p-5 rounded-[12px] max-w-[500px]"
+          className="w-2/3 space-y-6 bg-white p-5 rounded-[12px] max-w-[500px] max-[500px]:max-w-full max-[500px]:w-full"
         >
           <h1 className="font-bold text-2xl text-neutral-700 text-center">
             Вход

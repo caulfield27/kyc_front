@@ -54,3 +54,5 @@ export const ERROR_MESSAGES: { [key: string]: string } = {
   '91': 'Продолжайте фотографирование',
   '101': 'Продолжайте фотографирование',
 };
+
+export const PRIORITY_ERRORS = [61, 62, 63, 64, 65, 66, 67, 68];

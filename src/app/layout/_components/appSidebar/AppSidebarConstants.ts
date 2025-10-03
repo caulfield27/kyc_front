@@ -1,4 +1,4 @@
-import { Building2, Home, NotepadText } from 'lucide-react';
+import { Building2, Home, NotepadText, Users } from 'lucide-react';
 
 import type { INavLink } from './AppSidebarTypes';
 
@@ -17,5 +17,10 @@ export const navItems: INavLink[] = [
     title: 'Заявки',
     path: '/applications',
     icon: NotepadText,
+  },
+  {
+    title: 'Роли',
+    path: '/roles',
+    icon: Users,
   },
 ];

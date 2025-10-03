@@ -8,7 +8,7 @@ import type {
 } from '@/services/applications/applicationTypes';
 
 import { useFlowStore } from '../../FlowStore';
-import { ERROR_MESSAGES } from './FaceScanConfig';
+import { ERROR_MESSAGES, PRIORITY_ERRORS } from './FaceScanConfig';
 import type { CameraMode, IFrameStatus } from './FaceScanTypes';
 import { interpolate, interpolateColor, rgbToCss } from './FaceScanUtils';
 
@@ -102,10 +102,11 @@ export const useFaceScanStore = create<IStates & Actions>((set, get) => ({
     const { stopPulse, startPulse, prevErrorKey, fileMutationFn, slug } = get();
     // const { setLivenessOpen, visionType, current_submission_id } =
     //   useFlowStore.getState();
+    const { setSubmissionState } = useFlowStore.getState();
     const parsedStatus: IFrameStatus = JSON.parse(frameStatus);
 
     if (parsedStatus.command === 'SUCCESS') {
-      console.log(parsedStatus.command);
+      setSubmissionState({ isSuccess: true, redirect_url: '/' });
 
       // if (fileMutationFn && slug) {
       //   const payload: IFile = {
@@ -125,107 +126,45 @@ export const useFaceScanStore = create<IStates & Actions>((set, get) => ({
     if (parsedStatus.command === 'STATS' || parsedStatus.command === 'ERROR') {
       const { errors } = parsedStatus.data;
       if (errors) {
-        // 0
-        // for (const error of errors) {
-        //   const text = ERROR_MESSAGES[error];
-        //   if (text !== prevErrorKey) {
-        //     set({
-        //       instruction: text,
-        //       prevErrorKey: text,
-        //     });
-
-        //     if (error === 64 || error === 19) {
-        //       stopPulse();
-        //       startPulse(1);
-        //     } else if (error === 20 || error === 65) {
-        //       stopPulse();
-        //       startPulse(3);
-        //     } else if (error === 67 || error === 23) {
-        //       stopPulse();
-        //       startPulse(0);
-        //     } else if (error === 68 || error === 24) {
-        //       stopPulse();
-        //       startPulse(2);
-        //     } else {
-        //       stopPulse();
-        //       startPulse(null);
-        //     }
-        //   }
-        // }
-        // 1
-        // if (errors.includes(64) || errors.includes(19)) {
-        //   const text = errors.includes(64)
-        //     ? ERROR_MESSAGES[64]
-        //     : ERROR_MESSAGES[19];
-        //   if (text !== prevErrorKey) {
-        //     set({ instruction: text });
-        //     stopPulse();
-        //     startPulse(1);
-        //     set({ prevErrorKey: text });
-        //   }
-        // } else if (errors.includes(20) || errors.includes(65)) {
-        //   const text = errors.includes(64)
-        //     ? ERROR_MESSAGES[20]
-        //     : ERROR_MESSAGES[65];
-        //   if (text !== prevErrorKey) {
-        //     set({ instruction: text });
-        //     stopPulse();
-        //     startPulse(3);
-        //     set({ prevErrorKey: text });
-        //   }
-        // } else if (errors.includes(67) || errors.includes(23)) {
-        //   const text = ERROR_MESSAGES[67];
-        //   if (text !== prevErrorKey) {
-        //     set({ instruction: text });
-        //     stopPulse();
-        //     startPulse(0);
-        //     set({ prevErrorKey: text });
-        //   }
-        // } else if (errors.includes(68) || errors.includes(24)) {
-        //   const text = ERROR_MESSAGES[68];
-        //   if (text !== prevErrorKey) {
-        //     set({ instruction: text });
-        //     stopPulse();
-        //     startPulse(2);
-        //     set({ prevErrorKey: text });
-        //   }
-        // } else {
-        //   const text = ERROR_MESSAGES[errors[0]];
-        //   if (text !== prevErrorKey) {
-        //     set({ instruction: text });
-        //     stopPulse();
-        //     startPulse(2);
-        //     set({ prevErrorKey: text });
-        //   }
-        // }
-
-        //2
-        const text = ERROR_MESSAGES[errors[0]];
-        const error = errors[0];
-
-        set({ instruction: text });
-
-        if ((error === 64 || error === 19) && text !== prevErrorKey) {
-          stopPulse();
-          startPulse(1);
-          set({ prevErrorKey: text });
-        } else if ((error === 20 || error === 65) && text !== prevErrorKey) {
-          stopPulse();
-          startPulse(3);
-          set({ prevErrorKey: text });
-        } else if ((error === 67 || error === 23) && text !== prevErrorKey) {
-          stopPulse();
-          startPulse(0);
-          set({ prevErrorKey: text });
-        } else if ((error === 68 || error === 24) && text !== prevErrorKey) {
-          stopPulse();
-          startPulse(2);
-          set({ prevErrorKey: text });
-        } else {
+        const priorityError = errors.find((error) =>
+          PRIORITY_ERRORS.includes(error)
+        );
+        if (priorityError) {
+          const text = ERROR_MESSAGES[priorityError];
           if (text !== prevErrorKey) {
-            stopPulse();
-            startPulse(null);
-            set({ prevErrorKey: text });
+            switch (priorityError) {
+              case 64:
+                stopPulse();
+                startPulse(1);
+                break;
+              case 65:
+                stopPulse();
+                startPulse(3);
+                break;
+              case 67:
+                stopPulse();
+                startPulse(0);
+                break;
+              case 68:
+                stopPulse();
+                startPulse(2);
+                break;
+              default:
+                stopPulse();
+                startPulse(null);
+            }
+            set({
+              instruction: text,
+              prevErrorKey: text,
+            });
+          }
+        } else {
+          const text = ERROR_MESSAGES[errors[0]];
+          if (text !== prevErrorKey) {
+            set({
+              instruction: text,
+              prevErrorKey: text,
+            });
           }
         }
       }

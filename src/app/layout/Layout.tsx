@@ -6,14 +6,15 @@ import { SidebarProvider, SidebarTrigger } from '@/ui';
 import { Loader } from '@/ui/loader/Loader';
 
 import { PrivateRoutes } from '../providers';
-import { AppSidebar } from './_components';
+import { AppSidebar, MobileHeader, MobileNavbar } from './_components';
 
 const Layout = () => {
+  const isMobile = window.innerWidth <= 500;
   useEffect(() => {
     getMe();
   }, []);
 
-  return (
+  return !isMobile ? (
     <SidebarProvider>
       <AppSidebar />
       <div className="w-full">
@@ -27,6 +28,20 @@ const Layout = () => {
         </main>
       </div>
     </SidebarProvider>
+  ) : (
+    <>
+      <div className="w-full">
+        <MobileHeader />
+        <main className="w-full px-[28px] max-[500px]:px-[16px] max-[500px]:mb-[71px] max-[500px]:pt-[16px]">
+          <Suspense fallback={<Loader />}>
+            <PrivateRoutes>
+              <Outlet />
+            </PrivateRoutes>
+          </Suspense>
+        </main>
+      </div>
+      <MobileNavbar />
+    </>
   );
 };
 

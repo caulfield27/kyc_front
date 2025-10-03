@@ -1,5 +1,4 @@
-import { Pencil, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
 import { useProcesses } from '@/services/processes';
@@ -8,15 +7,6 @@ import {
   BadgeCopy,
   Button,
   DataLoader,
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Input,
-  Label,
   Status,
   Table,
   TableBody,
@@ -28,13 +18,15 @@ import {
 } from '@/ui';
 import { cn } from '@/utils/clsx';
 
+import { AddProcessDialog } from './_components';
+
 const HomePage = () => {
   // zustand store states
   const organization = useGlobalStore((state) => state.organization);
 
   // locale states
+  const isMobile = window.innerWidth <= 500;
   const navigate = useNavigate();
-  const [processName, setProcessName] = useState<string>('Идентификация');
 
   // api
   const { query: data, mutation } = useProcesses();
@@ -42,67 +34,43 @@ const HomePage = () => {
 
   // event handlers
 
-  function handleCreateProcess() {
+  function handleCreateProcess(name: string) {
     const defaultPage = {
       title: 'Шаг 1',
       order: 0,
       elements: [],
     };
     mutation.mutate({
-      name: processName,
+      name: name,
       pages: [defaultPage],
     });
   }
 
   return (
-    <div className="flex flex-col gap-[60px]">
+    <div className="flex flex-col gap-[20px]">
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-col">
           <Title text="Кабинет" />
           <div className="text-[20px] flex flex-row gap-1.5">
-            <span className="text-neutral-500">Организация:</span>
-            <span className="font-bold">{organization.name}</span>
+            <span className="text-[#8B8B8B] max-[500px]:text-[16px]">
+              Организация:
+            </span>
+            <span className="font-bold max-[500px]:text-[16px] max-[500px]:font-semibold">
+              {organization.name}
+            </span>
           </div>
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="flex flex-row  gap-2 items-center justify-center">
-              Создать
-              <Plus color="#fff" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Создать процесс</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4">
-              <div className="grid gap-3">
-                <Label htmlFor="name" className="text-neutral-500 font-normal">
-                  Название процесса
-                </Label>
-                <Input
-                  autoFocus
-                  id="name"
-                  name="name"
-                  value={processName}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setProcessName(e.target.value)
-                  }
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button onClick={handleCreateProcess}>Создать</Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {!isMobile && (
+          <AddProcessDialog
+            isMobile={isMobile}
+            handleCreateProcess={handleCreateProcess}
+          />
+        )}
       </div>
       <div className="overflow-hidden rounded-md border">
         {isPending ? (
           <DataLoader size="m" />
-        ) : (
+        ) : !isMobile ? (
           <Table>
             <TableHeader>
               <TableRow className="bg-transparent">
@@ -158,6 +126,12 @@ const HomePage = () => {
               )}
             </TableBody>
           </Table>
+        ) : processes?.length ? (
+          processes.map((process) => <h1>1</h1>)
+        ) : (
+          <div className="bg-[#F5F5F5] rounded-2xl p-[4px]">
+            <div className="bg-primary rounded-2xl"></div>
+          </div>
         )}
       </div>
     </div>
