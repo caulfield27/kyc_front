@@ -1,6 +1,6 @@
-import { type ReactNode, useRef, useState } from 'react';
+import { type ReactNode, useRef } from 'react';
 
-import { useOrganization } from '@/services/organization';
+// import { useOrganization } from '@/services/organization';
 import {
   Button,
   Input,

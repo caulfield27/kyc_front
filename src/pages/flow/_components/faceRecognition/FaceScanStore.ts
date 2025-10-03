@@ -99,7 +99,7 @@ export const useFaceScanStore = create<IStates & Actions>((set, get) => ({
   },
   onSuccess: () => {},
   onMessage: async (frameStatus) => {
-    const { stopPulse, startPulse, prevErrorKey, fileMutationFn, slug } = get();
+    const { stopPulse, startPulse, prevErrorKey } = get();
     // const { setLivenessOpen, visionType, current_submission_id } =
     //   useFlowStore.getState();
     const { setSubmissionState } = useFlowStore.getState();

@@ -175,7 +175,7 @@ const elements: IElement[] = [
 ];
 
 export const ProcessStep = () => {
-  const { validation, page } = useFlowStore();
+  const { validation } = useFlowStore();
 
   return (
     <div className="w-full pt-5 flex flex-col justify-start items-start gap-5.5">

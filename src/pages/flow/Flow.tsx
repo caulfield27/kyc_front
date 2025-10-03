@@ -1,33 +1,32 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router';
 
-import { useApplicationMutation } from '@/services/applications';
-import { useProcessForm } from '@/services/processes/useProcesses';
-import { Button, Label, Loader, Title } from '@/ui';
-
+// import { useParams } from 'react-router';
+// import { useApplicationMutation } from '@/services/applications';
+// import { useProcessForm } from '@/services/processes/useProcesses';
+// import { Button, Label, Loader, Title } from '@/ui';
 import { Error, FaceScan, Passport, ProcessStep, Success } from './_components';
 import { useFlowStore } from './FlowStore';
-import { generatePayload } from './FlowUtils';
+// import { generatePayload } from './FlowUtils';
 
 const Flow = () => {
   // zustand satore states
   const {
-    step,
+    // step,
     isDocReaderOpen,
     isLivenessOpen,
-    setPage,
-    inputData,
-    setStep,
+    // setPage,
+    // inputData,
+    // setStep,
     submissionState,
-    setSubmissionState,
+    // setSubmissionState,
     errorState,
-    nextStep,
-    page,
-    setCurrentSubmissionId,
+    // nextStep,
+    // page,
+    // setCurrentSubmissionId,
   } = useFlowStore();
 
   // locale states
-  const { slug } = useParams();
+  // const { slug } = useParams();
 
   // api
   // const { isPending, data: process } = useProcessForm(slug ?? '', step);

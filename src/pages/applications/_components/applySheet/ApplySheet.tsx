@@ -1,25 +1,26 @@
 import { Download } from 'lucide-react';
-import { type ReactNode, useMemo, useState } from 'react';
+// import { type ReactNode, useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { useApplicationById } from '@/services/applications';
 import {
   Button,
-  Card,
+  // Card,
   DataLoader,
   FileLoader,
-  Label,
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  // Label,
+  // Select,
+  // SelectContent,
+  // SelectGroup,
+  // SelectItem,
+  // SelectTrigger,
+  // SelectValue,
   SheetClose,
   SheetContent,
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  Text,
+  // Text,
 } from '@/ui';
 
 export const ApplySheet = ({ id }: { id: number }) => {

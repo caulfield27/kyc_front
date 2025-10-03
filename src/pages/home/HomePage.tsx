@@ -127,7 +127,7 @@ const HomePage = () => {
             </TableBody>
           </Table>
         ) : processes?.length ? (
-          processes.map((process) => <h1>1</h1>)
+          processes.map(() => <h1>1</h1>)
         ) : (
           <div className="bg-[#F5F5F5] rounded-2xl p-[4px]">
             <div className="bg-primary rounded-2xl"></div>

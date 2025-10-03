@@ -1,16 +1,15 @@
 import { useEffect, useRef } from 'react';
-import { useParams } from 'react-router';
 
-import { useFileUpload } from '@/services/applications';
-
-import { useFlowStore } from '../../FlowStore';
+// import { useParams } from 'react-router';
+// import { useFileUpload } from '@/services/applications';
+// import { useFlowStore } from '../../FlowStore';
 import styles from './FaceScan.module.css';
 import { useFaceScanStore } from './FaceScanStore';
 import { setupCanvas } from './FaceScanUtils';
 
 export const FaceScan = () => {
   // ZUSTAND STORE STATES
-  const { init, instruction, loadingText, setFileMutationFn, setSlug } =
+  const { init, instruction, loadingText } =
     useFaceScanStore();
   // const { setInputData, setCurrentSubmissionId } = useFlowStore();
 
