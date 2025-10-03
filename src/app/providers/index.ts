@@ -1,6 +1,6 @@
-import { AppProvider } from './router/Provider';
-import { QueryProvider } from './queryProvider/QueryProvider';
-import { PrivateRoutes } from './accessProviders/PrivateRoutes';
 import { GuestRoutes } from './accessProviders/GuestRoutes';
+import { PrivateRoutes } from './accessProviders/PrivateRoutes';
+import { QueryProvider } from './queryProvider/QueryProvider';
+import { AppProvider } from './router/Provider';
 
-export { AppProvider, QueryProvider, PrivateRoutes, GuestRoutes };
+export { AppProvider, GuestRoutes,PrivateRoutes, QueryProvider };

@@ -8,7 +8,6 @@ import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
 import { toasterOptions } from '@/constants';
-import { useProcessStore } from '../../ProcessStore';
 import type { IElement, IPage } from '@/services/processes/processesTypes';
 import {
   Button,
@@ -19,11 +18,12 @@ import {
   SheetTitle,
 } from '@/ui';
 
+import { useProcessStore } from '../../ProcessStore';
 import { DNDContextWrapper } from '../dndContext/DndContextWrapper';
 import { Draggable } from '../draggable/Draggable';
 import { ElementCard } from '../elementCard/ElementCard';
-import { swapById } from './AddPageSheetUtils';
 import { ElementsList } from '../elementsList/ElementsList';
+import { swapById } from './AddPageSheetUtils';
 
 export const AddPageSheet = ({ page }: { page: IPage }) => {
   // zustand store states

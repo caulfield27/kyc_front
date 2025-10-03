@@ -1,4 +1,3 @@
-import type { IElement } from '@/services/processes/processesTypes';
 import type {
   DragAbortEvent,
   DragCancelEvent,
@@ -9,6 +8,8 @@ import type {
   DragStartEvent,
 } from '@dnd-kit/core';
 import type { ReactNode } from 'react';
+
+import type { IElement } from '@/services/processes/processesTypes';
 
 
 interface Props {

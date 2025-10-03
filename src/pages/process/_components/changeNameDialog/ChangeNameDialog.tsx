@@ -1,7 +1,6 @@
 import { Pencil } from 'lucide-react';
 import { useState } from 'react';
 
-import { useProcessStore } from '../../ProcessStore';
 import type { IPage } from '@/services/processes/processesTypes';
 import {
   Button,
@@ -15,6 +14,8 @@ import {
   Input,
   Label,
 } from '@/ui';
+
+import { useProcessStore } from '../../ProcessStore';
 
 export const ChangeNameDialog = ({ page }: { page: IPage }) => {
   const { updatePageName, setCurrentPage } = useProcessStore();

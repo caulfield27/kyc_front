@@ -1,7 +1,6 @@
 import { LogOut } from 'lucide-react';
 import { NavLink, useLocation, useNavigate } from 'react-router';
 
-import { cn } from '@/utils/clsx';
 import { useGlobalStore } from '@/store';
 import {
   Avatar,
@@ -15,6 +14,7 @@ import {
   SidebarHeader,
   SidebarMenu,
 } from '@/ui';
+import { cn } from '@/utils/clsx';
 
 import { navItems } from './AppSidebarConstants';
 

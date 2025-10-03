@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { toast } from 'sonner';
+// import { useState } from 'react';
+// import { toast } from 'sonner';
 
-import { toasterOptions } from '@/constants';
+// import { toasterOptions } from '@/constants';
 import { useOrganization } from '@/services/organization';
-import { useGlobalStore } from '@/store/global/globalStore';
+// import { useGlobalStore } from '@/store/global/globalStore';
 import {
-  Avatar,
-  AvatarImage,
+  // Avatar,
+  // AvatarImage,
   Button,
-  Card,
+  // Card,
   DataLoader,
-  Input,
+  // Input,
   Status,
   Table,
   TableBody,
@@ -29,14 +29,14 @@ const Organization = () => {
   const {
     organizationQuery,
     domainsQuery,
-    updateOrgMutation,
-    uploadLogoMutation,
+    // updateOrgMutation,
+    // uploadLogoMutation,
     addDomainMutation,
     verifyDomainMutation,
-    deleteDomainMutation,
+    // deleteDomainMutation,
   } = useOrganization();
 
-  const { isPending: isOrgPending, data: organization } = organizationQuery;
+  const { isPending: isOrgPending } = organizationQuery;
   const { isPending: isDomainsPending, data: domains } = domainsQuery;
   const { mutate: addDomain, isPending: addDomainPending } = addDomainMutation;
   const { mutate: verifyDomain, isPending: verifyDomainPending } =
