@@ -1,6 +1,7 @@
 import { publicRequest, sendRequest } from '@/api/apiConfig';
 
 import {
+  GET_FILE,
   SUBMISSION_BY_ID,
   SUBMISSIONS,
   SUBMIT_FORM,
@@ -10,6 +11,7 @@ import {
 import type {
   ApplyStatus,
   IApplication,
+  IDownloadFileData,
   IFile,
   IFileResponse,
   ISubmitData,
@@ -46,6 +48,23 @@ export async function updateSubmissionStatus(data: {
     const { id, status } = data;
     const response = await sendRequest.put(UPDATE_SUBMISSION(id), { status });
     return response.data;
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+}
+
+export async function getFile(
+  data: IDownloadFileData & { id: number }
+): Promise<{ filename: string; blob: Blob }> {
+  try {
+    const response = await sendRequest.get(GET_FILE(data.id), {
+      responseType: 'blob',
+    });
+    return {
+      filename: data.filename,
+      blob: response.data,
+    };
   } catch (e) {
     console.error(e);
     throw e;

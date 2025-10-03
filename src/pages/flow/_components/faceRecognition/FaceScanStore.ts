@@ -100,56 +100,58 @@ export const useFaceScanStore = create<IStates & Actions>((set, get) => ({
   onSuccess: () => {},
   onMessage: async (frameStatus) => {
     const { stopPulse, startPulse, prevErrorKey, fileMutationFn, slug } = get();
-    const { setLivenessOpen, visionType, current_submission_id } =
-      useFlowStore.getState();
+    // const { setLivenessOpen, visionType, current_submission_id } =
+    //   useFlowStore.getState();
     const parsedStatus: IFrameStatus = JSON.parse(frameStatus);
 
     if (parsedStatus.command === 'SUCCESS') {
-      if (fileMutationFn && slug) {
-        const payload: IFile = {
-          field_key: visionType,
-          filename: '',
-          content: parsedStatus.data.token,
-          is_integration_result: false,
-          slug,
-        };
-        if (current_submission_id)
-          payload['submission_id'] = current_submission_id;
-        fileMutationFn(payload);
-      }
-      setLivenessOpen(false);
+      console.log(parsedStatus.command);
+
+      // if (fileMutationFn && slug) {
+      //   const payload: IFile = {
+      //     field_key: visionType,
+      //     filename: '',
+      //     content: parsedStatus.data.token,
+      //     is_integration_result: false,
+      //     slug,
+      //   };
+      //   if (current_submission_id)
+      //     payload['submission_id'] = current_submission_id;
+      //   fileMutationFn(payload);
+      // }
+      // setLivenessOpen(false);
     }
 
     if (parsedStatus.command === 'STATS' || parsedStatus.command === 'ERROR') {
       const { errors } = parsedStatus.data;
       if (errors) {
         // 0
-        for (const error of errors) {
-          const text = ERROR_MESSAGES[error];
-          if (text !== prevErrorKey) {
-            set({
-              instruction: text,
-              prevErrorKey: text,
-            });
+        // for (const error of errors) {
+        //   const text = ERROR_MESSAGES[error];
+        //   if (text !== prevErrorKey) {
+        //     set({
+        //       instruction: text,
+        //       prevErrorKey: text,
+        //     });
 
-            if (error === 64 || error === 19) {
-              stopPulse();
-              startPulse(1);
-            } else if (error === 20 || error === 65) {
-              stopPulse();
-              startPulse(3);
-            } else if (error === 67 || error === 23) {
-              stopPulse();
-              startPulse(0);
-            } else if (error === 68 || error === 24) {
-              stopPulse();
-              startPulse(2);
-            } else {
-              stopPulse();
-              startPulse(null);
-            }
-          }
-        }
+        //     if (error === 64 || error === 19) {
+        //       stopPulse();
+        //       startPulse(1);
+        //     } else if (error === 20 || error === 65) {
+        //       stopPulse();
+        //       startPulse(3);
+        //     } else if (error === 67 || error === 23) {
+        //       stopPulse();
+        //       startPulse(0);
+        //     } else if (error === 68 || error === 24) {
+        //       stopPulse();
+        //       startPulse(2);
+        //     } else {
+        //       stopPulse();
+        //       startPulse(null);
+        //     }
+        //   }
+        // }
         // 1
         // if (errors.includes(64) || errors.includes(19)) {
         //   const text = errors.includes(64)
@@ -198,34 +200,34 @@ export const useFaceScanStore = create<IStates & Actions>((set, get) => ({
         // }
 
         //2
-        // const text = ERROR_MESSAGES[errors[0]];
-        // const error = errors[0];
+        const text = ERROR_MESSAGES[errors[0]];
+        const error = errors[0];
 
-        // set({ instruction: text });
+        set({ instruction: text });
 
-        // if ((error === 64 || error === 19) && text !== prevErrorKey) {
-        //   stopPulse();
-        //   startPulse(1);
-        //   set({ prevErrorKey: text });
-        // } else if ((error === 20 || error === 65) && text !== prevErrorKey) {
-        //   stopPulse();
-        //   startPulse(3);
-        //   set({ prevErrorKey: text });
-        // } else if ((error === 67 || error === 23) && text !== prevErrorKey) {
-        //   stopPulse();
-        //   startPulse(0);
-        //   set({ prevErrorKey: text });
-        // } else if ((error === 68 || error === 24) && text !== prevErrorKey) {
-        //   stopPulse();
-        //   startPulse(2);
-        //   set({ prevErrorKey: text });
-        // } else {
-        //   if (text !== prevErrorKey) {
-        //     stopPulse();
-        //     startPulse(null);
-        //     set({ prevErrorKey: text });
-        //   }
-        // }
+        if ((error === 64 || error === 19) && text !== prevErrorKey) {
+          stopPulse();
+          startPulse(1);
+          set({ prevErrorKey: text });
+        } else if ((error === 20 || error === 65) && text !== prevErrorKey) {
+          stopPulse();
+          startPulse(3);
+          set({ prevErrorKey: text });
+        } else if ((error === 67 || error === 23) && text !== prevErrorKey) {
+          stopPulse();
+          startPulse(0);
+          set({ prevErrorKey: text });
+        } else if ((error === 68 || error === 24) && text !== prevErrorKey) {
+          stopPulse();
+          startPulse(2);
+          set({ prevErrorKey: text });
+        } else {
+          if (text !== prevErrorKey) {
+            stopPulse();
+            startPulse(null);
+            set({ prevErrorKey: text });
+          }
+        }
       }
     }
   },

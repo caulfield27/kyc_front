@@ -30,13 +30,13 @@ const Flow = () => {
   const { slug } = useParams();
 
   // api
-  const { isPending, data: process } = useProcessForm(slug ?? '', step);
-  const { mutate, isPending: mutationPending } = useApplicationMutation(
-    slug ?? '',
-    setStep,
-    setSubmissionState,
-    setCurrentSubmissionId
-  );
+  // const { isPending, data: process } = useProcessForm(slug ?? '', step);
+  // const { mutate, isPending: mutationPending } = useApplicationMutation(
+  //   slug ?? '',
+  //   setStep,
+  //   setSubmissionState,
+  //   setCurrentSubmissionId
+  // );
 
   // effect handlers
   useEffect(() => {
@@ -48,22 +48,22 @@ const Flow = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (process?.current_page) {
-      setPage(process.current_page);
-    }
-  }, [process]);
+  // useEffect(() => {
+  //   if (process?.current_page) {
+  //     setPage(process.current_page);
+  //   }
+  // }, [process]);
 
   // event handlers
 
-  function handleSend() {
-    const payload = {
-      step,
-      data: generatePayload(inputData),
-      is_final: step === process?.total,
-    };
-    nextStep(page?.elements ?? [], () => mutate(payload));
-  }
+  // function handleSend() {
+  //   const payload = {
+  //     step,
+  //     data: generatePayload(inputData),
+  //     is_final: step === process?.total,
+  //   };
+  //   nextStep(page?.elements ?? [], () => mutate(payload));
+  // }
 
   switch (true) {
     case submissionState.isSuccess:
@@ -75,19 +75,20 @@ const Flow = () => {
     case isDocReaderOpen:
       return <Passport />;
     default:
-      return isPending ? (
-        <Loader />
-      ) : (
+      // return isPending ? (
+      //   <Loader />
+      // ) : (
+      return (
         <div className="max-w-[var(--container_mw)] m-auto py-8">
           <div className="w-full flex flex-row items-end justify-between border-b-[1px] py-1 border-neutral-300">
-            <Title
+            {/* <Title
               className="border-0 mb-0"
               text={process?.process.name ?? ''}
             />
-            <Label className="text-neutral-500">{`Шаг ${process?.step ?? 0} из ${process?.total ?? 0}`}</Label>
+            <Label className="text-neutral-500">{`Шаг ${process?.step ?? 0} из ${process?.total ?? 0}`}</Label> */}
           </div>
           <ProcessStep />
-          <div className="w-full flex justify-end mt-5">
+          {/* <div className="w-full flex justify-end mt-5">
             {step === process?.total ? (
               <Button disabled={mutationPending} onClick={handleSend}>
                 {mutationPending ? 'Отправляем...' : 'Отправить'}
@@ -101,7 +102,7 @@ const Flow = () => {
                 {mutationPending ? 'Отправляем...' : 'Далее'}
               </Button>
             )}
-          </div>
+          </div> */}
         </div>
       );
   }

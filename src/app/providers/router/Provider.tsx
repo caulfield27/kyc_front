@@ -7,7 +7,7 @@ import { routes } from './routes';
 export const AppProvider = () => {
   return (
     <>
-      <RouterProvider router={routes} />;
+      <RouterProvider router={routes} />
       <Toaster />
     </>
   );

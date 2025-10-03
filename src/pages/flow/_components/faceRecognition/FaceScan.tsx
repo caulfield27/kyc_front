@@ -12,7 +12,7 @@ export const FaceScan = () => {
   // ZUSTAND STORE STATES
   const { init, instruction, loadingText, setFileMutationFn, setSlug } =
     useFaceScanStore();
-  const { setInputData, setCurrentSubmissionId } = useFlowStore();
+  // const { setInputData, setCurrentSubmissionId } = useFlowStore();
 
   // DOM REFS
   const visionRef = useRef<HTMLDivElement | null>(null);
@@ -21,16 +21,16 @@ export const FaceScan = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // API
-  const { slug } = useParams();
-  const { mutate } = useFileUpload(setInputData, setCurrentSubmissionId);
+  // const { slug } = useParams();
+  // const { mutate } = useFileUpload(setInputData, setCurrentSubmissionId);
 
   // EFFECT HANDLERS
   useEffect(() => {
-    if (slug) {
-      setSlug(slug);
-    }
+    // if (slug) {
+    //   setSlug(slug);
+    // }
 
-    setFileMutationFn(mutate);
+    // setFileMutationFn(mutate);
 
     const vision = visionRef.current;
     const canvasSemicircles = canvasSemicirclesRef.current;

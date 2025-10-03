@@ -2,9 +2,11 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { TOAST_LOADER_ID, toasterOptions } from '@/constants';
+import { downloadFile } from '@/utils/downloadFile';
 
 import { SUBMISSIONS_KEY } from './applicationConstants';
 import {
+  getFile,
   getSubmissionById,
   getSubmissions,
   submitPublicForm,
@@ -47,7 +49,16 @@ export const useApplicationById = (id: number) => {
     queryFn: () => getSubmissionById(id),
   });
 
-  return query;
+  const downloadMutation = useMutation({
+    mutationFn: getFile,
+    onSuccess: (data) => {
+      const { filename, blob } = data;
+      const blobString = URL.createObjectURL(blob);
+      downloadFile(filename, blobString);
+    },
+  });
+
+  return { query, downloadMutation };
 };
 
 export const useApplicationMutation = (

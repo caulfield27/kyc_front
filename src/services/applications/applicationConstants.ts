@@ -7,6 +7,7 @@ export const UPDATE_SUBMISSION = (status_id: number) =>
   `submissions/${status_id}/status`;
 export const SUBMIT_FORM = (slug: string) => `submissions/public/${slug}`;
 export const UPLOAD_FILE = 'submissions/upload-file/';
+export const GET_FILE = (id: number) => `submissions/files/${id}`;
 
 export const SUBMISSIONS_KEY = {
   submissions: 'submissions',

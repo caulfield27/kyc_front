@@ -71,3 +71,5 @@ export interface IFileResponse {
   message: string;
   submission_id: number;
 }
+
+export type IDownloadFileData = Pick<IFileResponse, 'filename'>;

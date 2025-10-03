@@ -1,3 +1,4 @@
+import { Download } from 'lucide-react';
 import { type ReactNode, useMemo, useState } from 'react';
 
 import { useApplicationById } from '@/services/applications';
@@ -5,6 +6,7 @@ import {
   Button,
   Card,
   DataLoader,
+  FileLoader,
   Label,
   Select,
   SelectContent,
@@ -19,23 +21,6 @@ import {
   SheetTitle,
   Text,
 } from '@/ui';
-
-import { generateStatusData } from './ApplySheetUtils';
-
-const Container = ({
-  children,
-  label,
-}: {
-  children: ReactNode;
-  label: string;
-}) => {
-  return (
-    <div className="w-full flex flex-col items-start justify-start gap-2.5 text-neutral-500">
-      <Label className="text-neutral-500">{label}</Label>
-      {children}
-    </div>
-  );
-};
 
 export const ApplySheet = ({ id }: { id: number }) => {
   // locale states
@@ -55,93 +40,69 @@ export const ApplySheet = ({ id }: { id: number }) => {
   //   document.body.removeChild(link);
   // };
 
+  // locale states
+  const [currentFileId, setCurrentFileId] = useState<number | null>(null);
+
   // api
-  const { data: apply, isPending } = useApplicationById(id);
+  const { query, downloadMutation } = useApplicationById(id);
+  const { data: apply, isPending } = query;
   const fields = apply ? apply.fields : [];
   const files = apply ? apply.files : [];
-  console.log(fields, files);
 
   return (
     <SheetContent>
       <SheetHeader>
         <SheetTitle>{'Данные клиента'}</SheetTitle>
       </SheetHeader>
-      <div className="px-3.5 flex flex-col gap-5 w-full h-[90vh] overflow-y-auto">
+      <div className="px-3.5 flex flex-col gap-3 w-full h-[90vh] overflow-y-auto">
         {isPending ? (
           <DataLoader size="m" />
         ) : (
           <>
-            {/* <Container label="Статус">
-          <Select
-            onValueChange={(value: string) => setStatus(value as StatusType)}
-            value={status}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Выберите статус" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="processing">В процессе</SelectItem>
-                <SelectItem value="in_review">В обработке</SelectItem>
-                <SelectItem value="approved">Подтверждено</SelectItem>
-                <SelectItem value="rejected">Отклонено</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </Container> */}
-            <Container label="Данные заявки">
-              <Card className="w-full p-2.5">
-                {/* <ul className="flex flex-col gap-3">
-              {data.length ? (
-                data.map((data) => {
-                  return (
-                    <li className="flex flex-col items-start justify-center gap-1">
-                      <span className="text-[14px] text-neutral-500 font-light">
-                        {data.key}
-                      </span>
-                      {typeof data.value === 'object' ? (
-                        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-                          <code className="text-white">
-                            {JSON.stringify(data.value, null, 2)}
-                          </code>
-                        </pre>
-                      ) : (
-                        <span>{data.value as string}</span>
-                      )}
-                    </li>
-                  );
-                })
-              ) : (
-                <Text content="Нет данных" />
-              )}
-            </ul> */}
-              </Card>
-            </Container>
-            <Container label="Файлы">
-              <></>
-              {/* <div className="w-full py-4 flex flex-col gap-5">
-            {files.length ? (
-              files.map((file) => (
-                <div className="flex flex-col gap-4">
-                  <img
-                    className="rounded-2xl"
-                    src={`data:image/png;base64,${file.blobString}`}
-                    alt={file.key}
-                  />
-                  <Button
-                    onClick={() => handleDownload(file.blobString, file.key)}
-                    className="w-full"
-                    variant={'outline'}
+            {fields.map((field) => (
+              <div
+                key={field.id}
+                className="flex flex-row items-start justify-between"
+              >
+                <span className="text-[14px text-[#242424]">
+                  {field.field_key}
+                </span>
+                {/* <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
+                  <code className="text-white">
+                    {field.field_value}
+                  </code>
+                </pre> */}
+                <span className="text-[14px] font-semibold max-w-[200px]">
+                  {field.field_value}
+                </span>
+              </div>
+            ))}
+            {files.map((file) => (
+              <div
+                key={file.id}
+                className="flex flex-row items-start justify-between"
+              >
+                <span className="text-[14px text-[#242424]">
+                  {file.filename}
+                </span>
+                {currentFileId === file.id && downloadMutation.isPending ? (
+                  <FileLoader />
+                ) : (
+                  <button
+                    onClick={() => {
+                      setCurrentFileId(file.id);
+                      downloadMutation.mutate({
+                        filename: file.filename,
+                        id: file.id,
+                      });
+                    }}
+                    className="border-0 outline-0 bg-none cursor-pointer"
                   >
-                    Скачать
-                  </Button>
-                </div>
-              ))
-            ) : (
-              <Text content="Нет файлов" />
-            )}
-          </div> */}
-            </Container>
+                    <Download size={'20px'} />
+                  </button>
+                )}
+              </div>
+            ))}
           </>
         )}
       </div>

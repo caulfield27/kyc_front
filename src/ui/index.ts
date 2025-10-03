@@ -44,6 +44,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from './dropdown-menu/Dropdown-menu';
+import { FileLoader } from './fileLoader/FileLoader';
 import {
   Form,
   FormControl,
@@ -175,6 +176,7 @@ export {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
+  FileLoader,
   Form,
   FormControl,
   FormDescription,

@@ -13,7 +13,6 @@ import {
 import { Loader } from '@/ui';
 
 import { GuestRoutes } from '../accessProviders/GuestRoutes';
-import { PrivateRoutes } from '../accessProviders/PrivateRoutes';
 
 export const routes = createBrowserRouter([
   {
@@ -42,7 +41,7 @@ export const routes = createBrowserRouter([
     path: 'login',
     element: (
       <GuestRoutes>
-        <LazyLogin />,
+        <LazyLogin />
       </GuestRoutes>
     ),
   },
@@ -50,7 +49,7 @@ export const routes = createBrowserRouter([
     path: 'flow/:slug',
     element: (
       <Suspense fallback={<Loader />}>
-        <LazyFlow />,
+        <LazyFlow />
       </Suspense>
     ),
   },
